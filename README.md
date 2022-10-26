@@ -1,7 +1,7 @@
 # 2023-18-bot
 
 
-## Collaboration guidelines
+## Collaboration Guidelines
 
 ### Branching
 - use "firstname/branch-feature" format for branch names.
