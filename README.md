@@ -8,7 +8,7 @@
 - always create new branches when working on a new feature, even for the smallest features.
 
 ### Commits
-- write a short description the commits e.g. "added basic PID control for the fly wheel"
+- write a short description for the commits e.g. "added basic PID control for the fly wheel"
 
-### Naming Vonvention
+### Naming Convention
 - use lower camel case for variables, and upper cammel case for funcitons. (e.g. "int turnRate; void TurnRight(){}")
