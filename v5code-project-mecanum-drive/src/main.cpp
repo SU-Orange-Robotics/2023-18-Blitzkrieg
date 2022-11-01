@@ -85,14 +85,22 @@ void usercontrol(void) {
     // ........................................................................
     double turnVal = Controller1.Axis1.position(percent);
     double forwardVal = Controller1.Axis3.position(percent);
+    double horizontalVal = Controller1.Axis4.position(percent);
 
-    double forwardVolts = forwardVal * 0.12;
-    double turnVolts = turnVal * 0.12 * (1 - (std::abs(turnVolts) / 12.0) * turnImportance);
+    double turnVolts = turnVal * 0.12;
+    double horizontalVolts = horizontalVal * 0.12;
+    double forwardVolts = forwardVal * 0.12 * (1 - (std::abs(turnVolts) / 12.0) * turnImportance);
 
-    Motor1.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
-    Motor3.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
-    Motor2.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
-    Motor4.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
+
+    Motor1.spin(forward, forwardVolts - horizontalVolts - turnVolts, voltageUnits::volt);
+    Motor3.spin(forward, forwardVolts + horizontalVolts - turnVolts, voltageUnits::volt);
+    Motor2.spin(forward, forwardVolts + horizontalVolts + turnVolts, voltageUnits::volt);
+    Motor4.spin(forward, forwardVolts - horizontalVolts + turnVolts, voltageUnits::volt);
+
+    // Motor1.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value() , velocityUnits::pct);
+    // Motor3.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value() , velocityUnits::pct);
+    // Motor2.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value() , velocityUnits::pct);
+    // Motor4.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value() , velocityUnits::pct);
     
 
     wait(20, msec); // Sleep the task for a short amount of time to
