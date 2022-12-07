@@ -11,6 +11,8 @@ brain  Brain;
 motor Motor15 = motor(PORT15, ratio18_1, false);
 motor Motor16 = motor(PORT16, ratio18_1, true);
 rotation Rotation1 = rotation(PORT1, false);
+rotation Rotation2 = rotation(PORT2, true);
+rotation Rotation3 = rotation(PORT3, false);
 
 // VEXcode generated functions
 

@@ -6,6 +6,8 @@ extern brain Brain;
 extern motor Motor15;
 extern motor Motor16;
 extern rotation Rotation1;
+extern rotation Rotation2;
+extern rotation Rotation3;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

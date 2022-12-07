@@ -13,6 +13,8 @@
 // Motor15              motor         15              
 // Motor16              motor         16              
 // Rotation1            rotation      1               
+// Rotation2            rotation      2               
+// Rotation3            rotation      3               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
