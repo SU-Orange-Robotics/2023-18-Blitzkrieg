@@ -10,10 +10,11 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// Motor15              motor         15
-// Motor16              motor         16
-// Rotation1            rotation      1
+// Controller1          controller                    
+// Motor15              motor         5               
+// Motor16              motor         6               
+// Motor7               motor         7               
+// Motor8               motor         8               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -57,13 +58,13 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
-  Motor15.spin(forward, 6 + 0, voltageUnits::volt);
-  Motor16.spin(forward, 6 - 0, voltageUnits::volt);
+  // Motor15.spin(forward, 6 + 0, voltageUnits::volt);
+  // Motor16.spin(forward, 6 - 0, voltageUnits::volt);
 
-  wait(1, sec);
+  // wait(1, sec);
 
-  Motor15.spin(forward, 0 + 0, voltageUnits::volt);
-  Motor16.spin(forward, 0 - 0, voltageUnits::volt);
+  // Motor15.spin(forward, 0 + 0, voltageUnits::volt);
+  // Motor16.spin(forward, 0 - 0, voltageUnits::volt);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -98,19 +99,19 @@ void usercontrol(void) {
     double forwardVolts =
         forwardVal * 0.12 * (1 - (std::abs(turnVolts) / 12.0) * turnImportance);
 
-    // Motor1.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
-    Motor15.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
-    Motor16.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
+    // Motor2.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
     // Motor4.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
+    // Motor15.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
+    // Motor16.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
 
-    // Motor1.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
-    // , velocityUnits::pct);
-    // Motor3.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
-    // , velocityUnits::pct);
-    // Motor2.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
-    // , velocityUnits::pct);
-    // Motor4.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
-    // , velocityUnits::pct);
+    Motor1.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
+    , velocityUnits::pct);
+    Motor3.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
+    , velocityUnits::pct);
+    Motor2.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
+    , velocityUnits::pct);
+    Motor4.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
+    , velocityUnits::pct);
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
