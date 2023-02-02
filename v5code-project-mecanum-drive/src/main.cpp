@@ -11,10 +11,10 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Controller1          controller                    
-// Motor15              motor         5               
-// Motor16              motor         6               
-// Motor7               motor         7               
-// Motor8               motor         8               
+// ChassisLR            motor         5               
+// ChassisLF            motor         6               
+// ChassisRF            motor         7               
+// ChassisRR            motor         8               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -104,13 +104,15 @@ void usercontrol(void) {
     // Motor15.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
     // Motor16.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
 
-    Motor1.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
+    // ChassisLR.spin(forward, Controller1.Axis3.value(), velocityUnits::pct);
+
+    ChassisLF.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
     , velocityUnits::pct);
-    Motor3.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
+    ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
     , velocityUnits::pct);
-    Motor2.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
+    ChassisRF.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
     , velocityUnits::pct);
-    Motor4.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
+    ChassisRR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
     , velocityUnits::pct);
 
     wait(20, msec); // Sleep the task for a short amount of time to
