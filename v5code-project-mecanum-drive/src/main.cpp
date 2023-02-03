@@ -90,34 +90,20 @@ void usercontrol(void) {
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.
     // ........................................................................
-    double turnVal = Controller1.Axis1.position(percent);
-    double forwardVal = Controller1.Axis3.position(percent);
-    // double horizontalVal = Controller1.Axis4.position(percent);
 
-    double turnVolts = turnVal * 0.12;
-    // double sidewayVolts = horizontalVal * 0.12;
-    double forwardVolts =
-        forwardVal * 0.12 * (1 - (std::abs(turnVolts) / 12.0) * turnImportance);
 
-    // Motor2.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
-    // Motor4.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
-    // Motor15.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
-    // Motor16.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
-
-    // ChassisLR.spin(forward, Controller1.Axis3.value(), velocityUnits::pct);
-
-    // ChassisLF.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
-    // , velocityUnits::pct);
-    // ChassisRR.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
-    // , velocityUnits::pct);
-    // ChassisRF.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
-    // , velocityUnits::pct);
-    // ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
-    // , velocityUnits::pct);
+    ChassisLF.spin(directionType::fwd,-Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
+    , velocityUnits::pct);
+    ChassisRR.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
+    , velocityUnits::pct);
+    ChassisRF.spin(directionType::fwd,-Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
+    , velocityUnits::pct);
+    ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
+    , velocityUnits::pct);
 
     // flywheel test code
-    ChassisLF.spin(forward,Controller1.Axis3.value(), velocityUnits::pct);
-    ChassisLR.spin(forward,Controller1.Axis3.value(), velocityUnits::pct);
+    // ChassisLF.spin(forward,Controller1.Axis3.value(), velocityUnits::pct);
+    // ChassisLR.spin(forward,Controller1.Axis3.value(), velocityUnits::pct);
 
 
     wait(20, msec); // Sleep the task for a short amount of time to
