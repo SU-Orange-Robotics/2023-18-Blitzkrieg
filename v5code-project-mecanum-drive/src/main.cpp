@@ -106,14 +106,19 @@ void usercontrol(void) {
 
     // ChassisLR.spin(forward, Controller1.Axis3.value(), velocityUnits::pct);
 
-    ChassisLF.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
-    , velocityUnits::pct);
-    ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
-    , velocityUnits::pct);
-    ChassisRF.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
-    , velocityUnits::pct);
-    ChassisRR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
-    , velocityUnits::pct);
+    // ChassisLF.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
+    // , velocityUnits::pct);
+    // ChassisRR.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
+    // , velocityUnits::pct);
+    // ChassisRF.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
+    // , velocityUnits::pct);
+    // ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
+    // , velocityUnits::pct);
+
+    // flywheel test code
+    ChassisLF.spin(forward,Controller1.Axis3.value(), velocityUnits::pct);
+    ChassisLR.spin(forward,Controller1.Axis3.value(), velocityUnits::pct);
+
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
