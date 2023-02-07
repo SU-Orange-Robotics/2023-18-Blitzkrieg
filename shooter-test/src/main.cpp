@@ -19,8 +19,8 @@
 using namespace vex;
 
 void setShooterVelocityPct(double percentage) {
-  shooterMotorA.setVelocity(percentage, percent);
-  shooterMotorB.setVelocity(percentage, percent);
+  shooterMotorA.setVelocity(percentage, velocityUnits::pct);
+  shooterMotorB.setVelocity(percentage, velocityUnits::pct);
 }
 
 void spinShooter(vex::directionType dir) {
@@ -32,7 +32,7 @@ int main() {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
 
-  setShooterVelocityPct(0.9);
+  setShooterVelocityPct(95.0);
   
   while(1) {
     spinShooter(forward);
