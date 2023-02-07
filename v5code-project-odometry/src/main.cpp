@@ -105,10 +105,10 @@ int main() {
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
-    cout << "hello world" << endl;
-    wait(100, msec);
+    // wait(100, msec);
 
     odo.updateOdometry();
+    wait(1, seconds);
     odo.getLocation();
   }
 }

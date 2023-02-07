@@ -18,48 +18,40 @@ private:
   double encoderRight;
   double encoderCenter;
 
-  double locationX = 0.0;
-  double locationY = 0.0;
-  double locationTheta = 0.0;
+  double locationX;
+  double locationY;
+  double locationTheta;
 
 // measure the robot to set this
-  const double width = 10;
-  const double length = 10;
+  const double width = 18;
+  const double length = 18;
   const double circ = 10;
 
 
 public:
+  Odometry() {
+    locationX = 0.0;
+    locationY = 0.0;
+    locationTheta = 0.0;
+
+    encoderLeft = 0.0;
+    encoderRight = 0.0;
+    encoderCenter = 0.0;
+  }
+
   vector<double> getLocation() {
-    // string odometryInfo = to_string(locationX) + " " + to_string(locationY) + " " + to_string(locationTheta);
-    // Brain.Screen.clearLine(0,color::black);
-    // Brain.Screen.clearLine(1,color::black);
-    // Brain.Screen.setPenColor(white);
-    // Brain.Screen.setCursor(1,1);
-    // Brain.Screen.print(locationX);
-
-  //   Brain.Screen.print("Hello");
-  // wait(1, seconds);
-  // Brain.Screen.newLine();
-  // Brain.Screen.print("Welcome!");
-  // wait(1, seconds);
-  // Brain.Screen.newLine();
-  // Brain.Screen.print("Goodbye!");
-  
-  // Brain.Screen.clearScreen();
-
-    // Display the X position on row 1
     Brain.Screen.clearScreen();
     
     Brain.Screen.setCursor(1, 1);
-    Brain.Screen.print("X: ", locationX);
+    Brain.Screen.print("X: %f", locationX);
 
     // Display the Y position on row 2
     Brain.Screen.newLine();
-    Brain.Screen.print("Y: ", locationY);
+    Brain.Screen.print("Y: %f", locationY);
 
     // Display the Z position on row 3
     Brain.Screen.newLine();
-    Brain.Screen.print("Theta: ", locationTheta);
+    Brain.Screen.print("Theta: %f", locationTheta);
 
     wait(1, seconds);
     return { locationX, locationY, locationTheta };

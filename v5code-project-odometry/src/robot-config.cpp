@@ -8,9 +8,9 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-rotation Left = rotation(PORT16, false);
+rotation Left = rotation(PORT16, true);
 rotation Right = rotation(PORT17, true);
-rotation Center = rotation(PORT5, false);
+rotation Center = rotation(PORT5, true);
 
 // VEXcode generated functions
 
