@@ -2,6 +2,8 @@
 #define ODOMETRY_H
 
 #include <vector>
+#include <string>
+// #include <string.h>
 
 #include "vex.h"
 
@@ -9,7 +11,7 @@ using namespace vex;
 
 using namespace std;
 
-class odometry {
+class Odometry {
 
 private:
   double encoderLeft;
@@ -28,6 +30,27 @@ private:
 
 public:
   vector<double> getLocation() {
+    // string odometryInfo = to_string(locationX) + " " + to_string(locationY) + " " + to_string(locationTheta);
+    // Brain.Screen.clearLine(0,color::black);
+    // Brain.Screen.clearLine(1,color::black);
+    // Brain.Screen.setPenColor(white);
+    // Brain.Screen.setCursor(1,1);
+    // Brain.Screen.print(locationX);
+
+    Brain.Screen.clearScreen();
+
+    // Display the X position on row 1
+    Brain.Screen.setCursor(1, 1);
+    Brain.Screen.print("X: %.3f", locationX);
+
+    // Display the Y position on row 2
+    Brain.Screen.newLine();
+    Brain.Screen.print("Y: %.3f", locationY);
+
+    // Display the Z position on row 3
+    Brain.Screen.newLine();
+    Brain.Screen.print("Theta: %.3f", locationTheta);
+
     return { locationX, locationY, locationTheta };
   }
 
@@ -35,9 +58,9 @@ public:
     // 1. get new encoder readings
 
     // Check if values should be reversed
-    double newEncoderLeft = Rotation1.position(turns);
-    double newEncoderRight = Rotation2.position(turns);
-    double newEncoderCenter = Rotation3.position(turns);
+    double newEncoderLeft = Left.position(turns);
+    double newEncoderRight = Right.position(turns);
+    double newEncoderCenter = Center.position(turns);
 
 
     double diffLeft = newEncoderLeft - encoderLeft;

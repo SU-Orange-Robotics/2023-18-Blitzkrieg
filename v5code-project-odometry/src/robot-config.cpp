@@ -8,11 +8,9 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-motor Motor15 = motor(PORT15, ratio18_1, false);
-motor Motor16 = motor(PORT16, ratio18_1, true);
-rotation Rotation1 = rotation(PORT1, false);
-rotation Rotation2 = rotation(PORT2, true);
-rotation Rotation3 = rotation(PORT3, false);
+rotation Left = rotation(PORT16, false);
+rotation Right = rotation(PORT17, true);
+rotation Center = rotation(PORT5, false);
 
 // VEXcode generated functions
 

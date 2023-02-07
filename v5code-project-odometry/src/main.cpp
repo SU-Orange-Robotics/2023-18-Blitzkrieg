@@ -10,14 +10,14 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Motor15              motor         15              
-// Motor16              motor         16              
-// Rotation1            rotation      1               
-// Rotation2            rotation      2               
-// Rotation3            rotation      3               
+// Left                 rotation      16              
+// Right                rotation      17              
+// Center               rotation      5               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
+#include "odometry.cpp"
+#include <iostream>
 
 using namespace vex;
 
@@ -72,6 +72,8 @@ void autonomous(void) {
 
 void usercontrol(void) {
   // User control code here, inside the loop
+  Brain.Screen.setFont(mono60);
+  Odometry odo;
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
@@ -81,6 +83,9 @@ void usercontrol(void) {
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.
     // ........................................................................
+
+    odo.updateOdometry();
+    odo.getLocation();
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
@@ -100,6 +105,7 @@ int main() {
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
+    cout << "hello world" << endl;
     wait(100, msec);
   }
 }
