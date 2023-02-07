@@ -18,9 +18,9 @@ private:
   double encoderRight;
   double encoderCenter;
 
-  double locationX;
-  double locationY;
-  double locationTheta;
+  double locationX = 0.0;
+  double locationY = 0.0;
+  double locationTheta = 0.0;
 
 // measure the robot to set this
   const double width = 10;
@@ -37,20 +37,31 @@ public:
     // Brain.Screen.setCursor(1,1);
     // Brain.Screen.print(locationX);
 
-    Brain.Screen.clearScreen();
+  //   Brain.Screen.print("Hello");
+  // wait(1, seconds);
+  // Brain.Screen.newLine();
+  // Brain.Screen.print("Welcome!");
+  // wait(1, seconds);
+  // Brain.Screen.newLine();
+  // Brain.Screen.print("Goodbye!");
+  
+  // Brain.Screen.clearScreen();
 
     // Display the X position on row 1
+    Brain.Screen.clearScreen();
+    
     Brain.Screen.setCursor(1, 1);
-    Brain.Screen.print("X: %.3f", locationX);
+    Brain.Screen.print("X: ", locationX);
 
     // Display the Y position on row 2
     Brain.Screen.newLine();
-    Brain.Screen.print("Y: %.3f", locationY);
+    Brain.Screen.print("Y: ", locationY);
 
     // Display the Z position on row 3
     Brain.Screen.newLine();
-    Brain.Screen.print("Theta: %.3f", locationTheta);
+    Brain.Screen.print("Theta: ", locationTheta);
 
+    wait(1, seconds);
     return { locationX, locationY, locationTheta };
   }
 

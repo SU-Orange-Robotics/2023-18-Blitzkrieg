@@ -72,8 +72,8 @@ void autonomous(void) {
 
 void usercontrol(void) {
   // User control code here, inside the loop
-  Brain.Screen.setFont(mono60);
-  Odometry odo;
+  // Brain.Screen.setFont(mono60);
+  
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
@@ -84,9 +84,7 @@ void usercontrol(void) {
     // update your motors, etc.
     // ........................................................................
 
-    odo.updateOdometry();
-    odo.getLocation();
-
+    
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
@@ -103,9 +101,14 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
+  Odometry odo;
+
   // Prevent main from exiting with an infinite loop.
   while (true) {
     cout << "hello world" << endl;
     wait(100, msec);
+
+    odo.updateOdometry();
+    odo.getLocation();
   }
 }
