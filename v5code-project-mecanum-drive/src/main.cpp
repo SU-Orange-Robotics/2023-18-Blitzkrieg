@@ -106,10 +106,13 @@ void usercontrol(void) {
     ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
     , velocityUnits::pct);
 
-    // IntakeMotor.spin(directionType::fwd,Controller1.ButtonR1.pressing()*100,velocityUnits::pct);
-    Controller1.ButtonR1.pressed([](){
-      IntakeMotor.spin(reverse, 100, velocityUnits::pct);
-    });
+    IntakeMotor.spin(vex::forward,Controller1.ButtonR1.pressing()*100,velocityUnits::pct);
+    IntakeMotor.spin(vex::reverse,Controller1.ButtonR2.pressing()*100,velocityUnits::pct);
+    
+    // Controller1.ButtonR1.pressed([](){
+    //   IntakeMotor.spin(reverse, 100, velocityUnits::pct);
+    // });
+
 
 
     wait(20, msec); // Sleep the task for a short amount of time to
