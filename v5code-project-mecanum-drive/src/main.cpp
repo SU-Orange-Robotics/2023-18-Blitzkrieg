@@ -11,14 +11,19 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Controller1          controller                    
-// ChassisLR            motor         5               
+// ChassisLR            motor         4               
 // ChassisLF            motor         6               
 // ChassisRF            motor         7               
 // ChassisRR            motor         8               
+// Left                 rotation      16              
+// Right                rotation      17              
+// Center               rotation      5               
+// IntakeMotor          motor         11              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
 #include <cmath>
+#include "odometry.cpp"
 using namespace vex;
 
 // A global instance of competition
@@ -105,6 +110,8 @@ void usercontrol(void) {
     // ChassisLF.spin(forward,Controller1.Axis3.value(), velocityUnits::pct);
     // ChassisLR.spin(forward,Controller1.Axis3.value(), velocityUnits::pct);
 
+    IntakeMotor.spin(directionType::fwd,Controller1.ButtonR1.pressing()*100,velocityUnits::pct);
+
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
@@ -122,8 +129,14 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
+    Odometry odo;
+
   // Prevent main from exiting with an infinite loop.
   while (true) {
-    wait(100, msec);
+    //wait(100, msec);
+
+    odo.updateOdometry();
+    wait(0.5, seconds);
+    odo.getLocation();
   }
 }

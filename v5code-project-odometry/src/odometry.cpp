@@ -37,6 +37,10 @@ public:
     encoderLeft = 0.0;
     encoderRight = 0.0;
     encoderCenter = 0.0;
+
+    Left.resetPosition();
+    Right.resetPosition();
+    Center.resetPosition();
   }
 
   vector<double> getLocation() {

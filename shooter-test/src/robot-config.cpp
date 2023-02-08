@@ -8,8 +8,8 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-motor shooterMotorA = motor(PORT10, ratio18_1, false);
-motor shooterMotorB = motor(PORT11, ratio18_1, false);
+motor shooterMotorA = motor(PORT19, ratio18_1, false);
+motor shooterMotorB = motor(PORT8, ratio18_1, true);
 
 // VEXcode generated functions
 

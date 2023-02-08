@@ -10,8 +10,8 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// shooterMotorA        motor         10              
-// shooterMotorB        motor         11              
+// shooterMotorA        motor         19              
+// shooterMotorB        motor         8               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -32,9 +32,9 @@ int main() {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
 
-  setShooterVelocityPct(95.0);
+  setShooterVelocityPct(100.0);
   
   while(1) {
-    spinShooter(forward);
+    spinShooter(reverse);
   }
 }
