@@ -17,6 +17,10 @@ rotation Left = rotation(PORT16, true);
 rotation Right = rotation(PORT17, true);
 rotation Center = rotation(PORT5, true);
 motor IntakeMotor = motor(PORT11, ratio36_1, true);
+motor TriggerMotor = motor(PORT9, ratio18_1, false);
+motor ShooterMotorsMotorA = motor(PORT18, ratio6_1, false);
+motor ShooterMotorsMotorB = motor(PORT19, ratio6_1, true);
+motor_group ShooterMotors = motor_group(ShooterMotorsMotorA, ShooterMotorsMotorB);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

@@ -44,6 +44,10 @@ public:
   }
 
   vector<double> getLocation() {
+    return { locationX, locationY, locationTheta };
+  }
+
+  void printLocation() {
     Brain.Screen.clearScreen();
     
     Brain.Screen.setCursor(1, 1);
@@ -58,7 +62,6 @@ public:
     Brain.Screen.print("Theta: %f", locationTheta);
 
     wait(1, seconds);
-    return { locationX, locationY, locationTheta };
   }
 
   void updateOdometry() {

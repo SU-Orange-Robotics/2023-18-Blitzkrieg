@@ -19,11 +19,13 @@
 // Right                rotation      17              
 // Center               rotation      5               
 // IntakeMotor          motor         11              
+// TriggerMotor         motor         9               
+// ShooterMotors        motor_group   18, 19          
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
 #include <cmath>
-#include "odometry.cpp"
+#include "odometry.h"
 using namespace vex;
 
 // A global instance of competition
@@ -135,10 +137,8 @@ int main() {
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
-    //wait(100, msec);
-
     odo.updateOdometry();
     wait(0.5, seconds);
-    odo.getLocation();
+    odo.printLocation();
   }
 }
