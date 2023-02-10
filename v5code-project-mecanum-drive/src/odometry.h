@@ -23,9 +23,9 @@ private:
   double locationTheta;
 
 // measure the robot to set this
-  const double width = 18;
-  const double length = 18;
-  const double circ = 10;
+  const double width = 6.5;
+  const double length = 16;
+  const double circ = 4 * 3.1415926;
 
 
 public:

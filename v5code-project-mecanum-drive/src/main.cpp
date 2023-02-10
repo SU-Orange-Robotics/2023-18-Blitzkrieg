@@ -27,10 +27,13 @@
 #include "vex.h"
 #include <cmath>
 #include "odometry.h"
+#include "mecanum-drive.h"
 using namespace vex;
 
 // A global instance of competition
 competition Competition;
+Odometry odo;
+
 
 // define your global instances of motors and other devices here
 
@@ -67,16 +70,14 @@ void stopShooter() {
 
 void triggerInit() {
   int i = 0;
-  while(true) {
-    if (i > 10) {
-      break;
-    }
+  TriggerMotor.setVelocity(5, percent);
+  
+  while(i < 5) {
     double position = TriggerMotor.position(degrees);
-
-    TriggerMotor.spin(vex::forward, 10, percent);
-    wait(0.3, sec);
-    if (abs(position - TriggerMotor.position(degrees)) < 3) {
-      Brain.Screen.print(abs(position - TriggerMotor.position(degrees)));
+    TriggerMotor.spin(vex::forward, 5, percent);
+    wait(0.15, sec);
+    TriggerMotor.stop();
+    if (abs(position - TriggerMotor.position(degrees)) < 1) {
       break;
     }
     i++;
@@ -106,7 +107,6 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
   
   // initialization stuff
-  Odometry odo;
   triggerInit();
   setShooterVelocityPct(90.0);
 
@@ -159,6 +159,13 @@ void usercontrol(void) {
     trigger();
   });
 
+  Controller1.ButtonLeft.pressed([](){
+    MecanumDrive::adjustLeft(20);
+  });
+
+  Controller1.ButtonRight.pressed([](){
+    MecanumDrive::adjustRight(20);
+  });
 
   double turnImportance = 0.5;
   while (1) {
@@ -183,6 +190,8 @@ void usercontrol(void) {
 
     IntakeMotor.spin(vex::forward,Controller1.ButtonR1.pressing()*100,velocityUnits::pct);
     // IntakeMotor.spin(vex::reverse,Controller1.ButtonR2.pressing()*100,velocityUnits::pct);
+
+    
     
 
     if (Controller1.ButtonL1.pressing()) {
