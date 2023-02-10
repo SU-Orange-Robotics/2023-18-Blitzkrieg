@@ -20,6 +20,10 @@ motor IntakeMotor = motor(PORT10, ratio36_1, true);
 motor TriggerMotor = motor(PORT8, ratio18_1, false);
 motor ShooterMotorA = motor(PORT2, ratio6_1, false);
 motor ShooterMotorB = motor(PORT17, ratio6_1, true);
+inertial Inertial16 = inertial(PORT16);
+
+// custom made variables/objects
+vex::timer angleAjustTimer;
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

@@ -15,6 +15,9 @@ extern motor IntakeMotor;
 extern motor TriggerMotor;
 extern motor ShooterMotorA;
 extern motor ShooterMotorB;
+extern inertial Inertial16;
+
+extern vex::timer angleAjustTimer;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
