@@ -43,6 +43,20 @@ public:
     Center.resetPosition();
   }
 
+  void reset() {
+    locationX = 0.0;
+    locationY = 0.0;
+    locationTheta = 0.0;
+
+    encoderLeft = 0.0;
+    encoderRight = 0.0;
+    encoderCenter = 0.0;
+
+    Left.resetPosition();
+    Right.resetPosition();
+    Center.resetPosition();
+  }
+
   vector<double> getLocation() {
     return { locationX, locationY, locationTheta };
   }

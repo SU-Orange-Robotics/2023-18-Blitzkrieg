@@ -59,15 +59,14 @@
 
 #include "vex.h"
 #include <cmath>
-#include "odometry.h"
 #include "mecanum-drive.h"
 #include "robot-config.h"
+#include "odometry.h"
 using namespace vex;
 
 // A global instance of competition
 competition Competition;
 Odometry odo;
-
 
 // define your global instances of motors and other devices here
 
@@ -144,7 +143,6 @@ void pre_auton(void) {
   // initialization stuff
   triggerInit();
   setShooterVelocityPct(90.0);
-
 }
 
 /*---------------------------------------------------------------------------*/
@@ -161,13 +159,14 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
-  // Motor15.spin(forward, 6 + 0, voltageUnits::volt);
-  // Motor16.spin(forward, 6 - 0, voltageUnits::volt);
-
-  // wait(1, sec);
-
-  // Motor15.spin(forward, 0 + 0, voltageUnits::volt);
-  // Motor16.spin(forward, 0 - 0, voltageUnits::volt);
+  
+  // basic shooting two discs
+  spinShooterForward();
+  trigger();
+  wait(2, sec);
+  trigger();
+  wait(0.5, sec);
+  stopShooter();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -182,7 +181,9 @@ void autonomous(void) {
 
 void usercontrol(void) {
   // User control code here, inside the loop
-
+  Controller1.ButtonR2.pressed([](){
+    IntakeMotor.stop();
+  });
   Controller1.ButtonL2.pressed([](){
     stopShooter();
   });
@@ -201,7 +202,7 @@ void usercontrol(void) {
     angleAjustTimer.reset();
   });
 
-  
+  odo.reset();
 
   double turnImportance = 0.5;
   while (1) {
@@ -252,9 +253,17 @@ void usercontrol(void) {
       spinShooterForward();
     }
 
+    
     if (Controller1.ButtonR1.pressing()) {
       IntakeMotor.spin(vex::forward,100,velocityUnits::pct);
+    } else {
+      // stop the intake when releasing button?
+      IntakeMotor.stop();
     }
+    // if (Controller1.ButtonR2.pressing()) {
+    //   IntakeMotor.stop()
+    //   // IntakeMotor.spin(vex::reverse, 100, velocityUnits::pct);
+    // }
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
