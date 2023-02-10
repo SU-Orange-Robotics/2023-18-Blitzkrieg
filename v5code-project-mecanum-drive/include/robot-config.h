@@ -13,7 +13,8 @@ extern rotation Right;
 extern rotation Center;
 extern motor IntakeMotor;
 extern motor TriggerMotor;
-extern motor_group ShooterMotors;
+extern motor ShooterMotorA;
+extern motor ShooterMotorB;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

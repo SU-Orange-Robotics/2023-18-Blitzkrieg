@@ -5,6 +5,7 @@ extern brain Brain;
 // VEXcode devices
 extern motor shooterMotorA;
 extern motor shooterMotorB;
+extern motor TriggerMotor;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

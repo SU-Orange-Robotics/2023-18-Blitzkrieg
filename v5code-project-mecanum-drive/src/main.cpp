@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
@@ -43,12 +44,72 @@ competition Competition;
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
+
+void setShooterVelocityPct(double percentage) {
+  ShooterMotorA.setVelocity(percentage, velocityUnits::pct);
+  ShooterMotorB.setVelocity(percentage, velocityUnits::pct);
+}
+
+void spinShooterForward() {
+  ShooterMotorA.spin(vex::forward);
+  ShooterMotorB.spin(vex::forward);
+}
+
+void spinShooterBackward() {
+  ShooterMotorA.spin(reverse);
+  ShooterMotorB.spin(reverse);
+}
+
+void stopShooter() {
+  ShooterMotorA.stop();
+  ShooterMotorB.stop();
+}
+
+void triggerInit() {
+  int i = 0;
+  while(true) {
+    if (i > 10) {
+      break;
+    }
+    double position = TriggerMotor.position(degrees);
+
+    TriggerMotor.spin(vex::forward, 10, percent);
+    wait(0.3, sec);
+    if (abs(position - TriggerMotor.position(degrees)) < 3) {
+      Brain.Screen.print(abs(position - TriggerMotor.position(degrees)));
+      break;
+    }
+    i++;
+  }
+
+// // dumb init
+//   TriggerMotor.spin(forward, 10, percent);
+//   wait(0.5, sec);
+//   TriggerMotor.stop();
+
+  TriggerMotor.stop();
+}
+
+void trigger() {
+  double position = TriggerMotor.position(degrees);
+  
+  TriggerMotor.spinToPosition(position-36,degrees);
+  wait(0.5, sec);
+  TriggerMotor.spinToPosition(position,degrees);
+}
+
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
+  
+  // initialization stuff
+  Odometry odo;
+  triggerInit();
+  setShooterVelocityPct(90.0);
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -86,6 +147,18 @@ void autonomous(void) {
 
 void usercontrol(void) {
   // User control code here, inside the loop
+  Controller1.ButtonL2.pressed([](){
+    stopShooter();
+  });
+
+  // Controller1.ButtonL1.pressed([](){
+  //   spinShooterForward();
+  // });
+
+  Controller1.ButtonA.pressed([](){
+    trigger();
+  });
+
 
   double turnImportance = 0.5;
   while (1) {
@@ -99,21 +172,22 @@ void usercontrol(void) {
     // ........................................................................
 
 
-    ChassisLF.spin(directionType::fwd,-Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
+    ChassisLF.spin(directionType::fwd,-Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
     , velocityUnits::pct);
-    ChassisRR.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
+    ChassisRR.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
     , velocityUnits::pct);
-    ChassisRF.spin(directionType::fwd,-Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
+    ChassisRF.spin(directionType::fwd,-Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
     , velocityUnits::pct);
-    ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
+    ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
     , velocityUnits::pct);
 
     IntakeMotor.spin(vex::forward,Controller1.ButtonR1.pressing()*100,velocityUnits::pct);
-    IntakeMotor.spin(vex::reverse,Controller1.ButtonR2.pressing()*100,velocityUnits::pct);
+    // IntakeMotor.spin(vex::reverse,Controller1.ButtonR2.pressing()*100,velocityUnits::pct);
     
-    // Controller1.ButtonR1.pressed([](){
-    //   IntakeMotor.spin(reverse, 100, velocityUnits::pct);
-    // });
+
+    if (Controller1.ButtonL1.pressing()) {
+      spinShooterForward();
+    }
 
 
 
@@ -133,12 +207,12 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
-    Odometry odo;
-
   // Prevent main from exiting with an infinite loop.
   while (true) {
-    odo.updateOdometry();
-    wait(0.5, seconds);
-    odo.printLocation();
+    // odo.updateOdometry();
+    // wait(0.5, seconds);
+    // odo.printLocation();
+
+    wait(20, msec);
   }
 }
