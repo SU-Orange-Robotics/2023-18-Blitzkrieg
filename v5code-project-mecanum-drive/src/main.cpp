@@ -142,7 +142,10 @@ void pre_auton(void) {
   
   // initialization stuff
   triggerInit();
-  setShooterVelocityPct(90.0);
+  setShooterVelocityPct(92.0);
+
+  Inertial16.calibrate();
+  odo.reset();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -155,18 +158,117 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+void twoHighAuto() {
+  // plan b for turning red
+  MecanumDrive::moveBack(20);
+  wait(1, sec);
+  MecanumDrive::stop();
+
+
+  MecanumDrive::adjustLeft(20);
+  wait(0.9, sec);
+  MecanumDrive::stop();
+
+  wait(0.2, sec);
+
+  // shoot two discs
+  spinShooterForward();
+  wait(4, sec);
+  trigger();
+  wait(0.5, sec);
+  trigger();
+  wait(0.2, sec);
+  stopShooter();
+
+  MecanumDrive::adjustRight(20);
+  wait(0.8,sec);
+  MecanumDrive::stop();
+
+  // move right
+  MecanumDrive::moveRight(20);
+  wait(4.9, sec);
+  MecanumDrive::stop();
+
+
+  // run back slowly
+  MecanumDrive::moveFront(20);
+  wait(1.1, sec);
+  MecanumDrive::stop();
+  
+  // roller
+  IntakeMotor.spin(vex::reverse, 100, percent);
+  wait(1.0, sec);
+  IntakeMotor.stop();
+}
+
+void threeLowAuto() {
+  MecanumDrive::moveBack(20);
+  wait(0.5, sec);
+  MecanumDrive::stop();
+
+  MecanumDrive::adjustRight(20);
+  wait(2.6, sec);
+  MecanumDrive::stop();
+
+  setShooterVelocityPct(50.0);
+  spinShooterForward();
+  wait(3, sec);
+  trigger();
+  wait(0.5, sec);
+  trigger();
+  wait(0.5, sec);
+  trigger();
+  wait(0.5, sec);
+
+  stopShooter();
+  setShooterVelocityPct(92.0);
+
+  MecanumDrive::adjustLeft(20);
+  wait(2.6, sec);
+  MecanumDrive::stop();
+
+  MecanumDrive::moveRight(20);
+  wait(3.9, sec);
+  MecanumDrive::stop();
+
+  // run back slowly
+  MecanumDrive::moveFront(20);
+  wait(0.3, sec);
+  MecanumDrive::stop();
+
+  MecanumDrive::moveRight(20);
+  wait(1.2, sec);
+  MecanumDrive::stop();
+
+  // run back slowly
+  MecanumDrive::moveFront(20);
+  wait(0.4, sec);
+  MecanumDrive::stop();
+  
+  // roller
+  IntakeMotor.spin(vex::reverse, 100, percent);
+  wait(1.0, sec);
+  IntakeMotor.stop();
+}
+
 void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
   
   // basic shooting two discs
-  spinShooterForward();
-  trigger();
-  wait(2, sec);
-  trigger();
-  wait(0.5, sec);
-  stopShooter();
+
+  // turn right/left 10 degrees
+  // double targetDegree = 10;
+  // MecanumDrive::autoTurn(targetDegree);
+  // while (Inertial16.heading(degrees) < targetDegree) {
+  //   wait(20, msec);
+  // }
+
+  // MecanumDrive::stop();
+
+  // twoHighAuto();
+  threeLowAuto();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -181,9 +283,9 @@ void autonomous(void) {
 
 void usercontrol(void) {
   // User control code here, inside the loop
-  Controller1.ButtonR2.pressed([](){
-    IntakeMotor.stop();
-  });
+  // Controller1.ButtonR2.pressed([](){
+  //   IntakeMotor.stop();
+  // });
   Controller1.ButtonL2.pressed([](){
     stopShooter();
   });
@@ -200,6 +302,18 @@ void usercontrol(void) {
   Controller1.ButtonRight.pressed([](){
     MecanumDrive::adjustRight(18);
     angleAjustTimer.reset();
+  });
+
+  Controller1.ButtonR1.pressed([](){
+    IntakeMotor.spin(vex::forward,100,velocityUnits::pct);
+  });
+
+  Controller1.ButtonR2.pressed([](){
+    IntakeMotor.spin(vex::reverse, 100, velocityUnits::pct);
+  });
+
+  Controller1.ButtonX.pressed([]() {
+    IntakeMotor.stop();
   });
 
   odo.reset();
@@ -254,15 +368,17 @@ void usercontrol(void) {
     }
 
     
-    if (Controller1.ButtonR1.pressing()) {
-      IntakeMotor.spin(vex::forward,100,velocityUnits::pct);
-    } else {
-      // stop the intake when releasing button?
-      IntakeMotor.stop();
-    }
+    // if (Controller1.ButtonR1.pressing()) {
+    //   IntakeMotor.spin(vex::forward,100,velocityUnits::pct);
+    // } else {
+    //   // stop the intake when releasing button?
+    //   IntakeMotor.stop();
+    // }
     // if (Controller1.ButtonR2.pressing()) {
-    //   IntakeMotor.stop()
-    //   // IntakeMotor.spin(vex::reverse, 100, velocityUnits::pct);
+
+    //   IntakeMotor.spin(vex::reverse, 100, velocityUnits::pct);
+    // } else {
+    //   IntakeMotor.stop();
     // }
 
     wait(20, msec); // Sleep the task for a short amount of time to
@@ -287,6 +403,6 @@ int main() {
     // wait(0.5, seconds);
     // odo.printLocation();
 
-    wait(20, msec);
+    wait(50, msec);
   }
 }
