@@ -117,6 +117,7 @@ void triggerInit() {
   }
 
 // // dumb init
+// Releases the trigger to shoot
 //   TriggerMotor.spin(forward, 10, percent);
 //   wait(0.5, sec);
 //   TriggerMotor.stop();
@@ -343,8 +344,9 @@ void usercontrol(void) {
       }
 
     }
-
-    {
+  }
+}
+    //{
       // if (Controller1.ButtonLeft.pressing()) {
       //   MecanumDrive::adjustLeft(20);
       // } else {
@@ -353,36 +355,52 @@ void usercontrol(void) {
       // if (Controller1.ButtonRight.pressing()) {
       //   MecanumDrive::adjustRight(20);
       // }
-
+    // Stop Mecanum Drive
       if ((Controller1.ButtonLeft.pressing() || Controller1.ButtonRight.pressing()) && angleAjustTimer.time(vex::sec) > 0.2) {
         MecanumDrive::stop();
       }
-    }
+    //}
 
     
     // IntakeMotor.spin(vex::reverse,Controller1.ButtonR2.pressing()*100,velocityUnits::pct);
     
+   // Spin shooter wheel for launching disc
+//    if (Controller1.ButtonL1.pressing()) {
+ //     spinShooterForward();
+ //   }
+ 
+  void IntakeMotorControl() { //start here
+  //change speed here if necessary
+     if (Controller1.ButtonR1.pressing()) {
+       IntakeMotor.spin(vex::forward,100,velocityUnits::pct);
+     } 
 
-    if (Controller1.ButtonL1.pressing()) {
-      spinShooterForward();
-    }
+     else if (Controller1.ButtonR2.pressing()) {
+       IntakeMotor.spin(vex::reverse, 100, velocityUnits::pct);
+     } 
 
-    
-    // if (Controller1.ButtonR1.pressing()) {
-    //   IntakeMotor.spin(vex::forward,100,velocityUnits::pct);
-    // } else {
-    //   // stop the intake when releasing button?
-    //   IntakeMotor.stop();
-    // }
-    // if (Controller1.ButtonR2.pressing()) {
-
-    //   IntakeMotor.spin(vex::reverse, 100, velocityUnits::pct);
-    // } else {
-    //   IntakeMotor.stop();
-    // }
+     else {
+       IntakeMotor.stop();
+     }
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
+  } //end here
+
+  // Intake Motor spin forward
+  void IntakeForward(){
+    
+  }
+
+// Drive speed tuning by inputting a new variable
+double driveSpeedTune(double speed){
+  return speed;
+}
+
+  // intake runs on its own until another button is pressed to end it
+void runIntake(){
+  while(Controller1.ButtonR2.pressing()){
+    IntakeMotor.spin(vex::reverse, 100, percent);
   }
 }
 
