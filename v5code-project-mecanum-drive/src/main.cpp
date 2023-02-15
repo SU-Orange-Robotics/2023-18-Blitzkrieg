@@ -86,9 +86,9 @@ void setShooterVelocityPct(double percentage) {
   ShooterMotorB.setVelocity(percentage, velocityUnits::pct);
 }
 
-void spinShooterForward() {
-  ShooterMotorA.spin(vex::forward);
-  ShooterMotorB.spin(vex::forward);
+void spinShooterForward(double percent  = 85) {
+  ShooterMotorA.spin(vex::forward, percent, velocityUnits::pct);
+  ShooterMotorB.spin(vex::forward, percent, velocityUnits::pct);
 }
 
 void spinShooterBackward() {
@@ -142,7 +142,8 @@ void pre_auton(void) {
   
   // initialization stuff
   triggerInit();
-  setShooterVelocityPct(92.0);
+  //setShooterVelocityPct(92.0);
+  spinShooterForward(50);
 
   Inertial16.calibrate();
   odo.reset();
@@ -286,8 +287,18 @@ void usercontrol(void) {
   // Controller1.ButtonR2.pressed([](){
   //   IntakeMotor.stop();
   // });
-  Controller1.ButtonL2.pressed([](){
+
+  // disabled for now in favor of hold-button control
+  /*Controller1.ButtonL2.pressed([](){
     stopShooter();
+  });*/
+
+  Controller1.ButtonL1.pressed([](){
+    spinShooterForward(80);
+  });
+
+  Controller1.ButtonL1.released([](){
+    spinShooterForward(50);
   });
 
   Controller1.ButtonA.pressed([](){
@@ -332,14 +343,11 @@ void usercontrol(void) {
 
     {
       if (!Controller1.ButtonLeft.pressing() && !Controller1.ButtonRight.pressing()) {
-        ChassisLF.spin(directionType::fwd,-Controller1.Axis3.value()-Controller1.Axis4.value()-Controller1.Axis1.value()
-        , velocityUnits::pct);
-        ChassisRR.spin(directionType::fwd,Controller1.Axis3.value()+Controller1.Axis4.value()-Controller1.Axis1.value()
-        , velocityUnits::pct);
-        ChassisRF.spin(directionType::fwd,-Controller1.Axis3.value()+Controller1.Axis4.value()+Controller1.Axis1.value()
-        , velocityUnits::pct);
-        ChassisLR.spin(directionType::fwd,Controller1.Axis3.value()-Controller1.Axis4.value()+Controller1.Axis1.value()
-        , velocityUnits::pct);
+        if (!Controller1.ButtonL2.pressing()) {
+          MecanumDrive::drive(Controller1.Axis3.value(), Controller1.Axis4.value(), Controller1.Axis1.value());
+        } else {
+          MecanumDrive::drive(-Controller1.Axis3.value(), -Controller1.Axis4.value(), Controller1.Axis1.value());
+        }
       }
 
     }
@@ -362,10 +370,12 @@ void usercontrol(void) {
     
     // IntakeMotor.spin(vex::reverse,Controller1.ButtonR2.pressing()*100,velocityUnits::pct);
     
-
+    /*
     if (Controller1.ButtonL1.pressing()) {
       spinShooterForward();
-    }
+    } else {
+      stopShooter();
+    }*/
 
     
     // if (Controller1.ButtonR1.pressing()) {
