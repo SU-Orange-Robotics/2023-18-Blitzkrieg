@@ -58,15 +58,21 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
-#include <cmath>
-#include "mecanum-drive.h"
 #include "robot-config.h"
+
+#include "mecanum-drive.h"
 #include "odometry.h"
+#include "trigger.h"
+#include "shooter.h"
+#include "auto-controller.h"
+
+#include <cmath>
+
 using namespace vex;
 
 // A global instance of competition
 competition Competition;
-Odometry odo;
+Odometry odo; // not correct, need to add to robot-config later
 
 // define your global instances of motors and other devices here
 
@@ -81,57 +87,6 @@ Odometry odo;
 /*---------------------------------------------------------------------------*/
 
 
-void setShooterVelocityPct(double percentage) {
-  ShooterMotorA.setVelocity(percentage, velocityUnits::pct);
-  ShooterMotorB.setVelocity(percentage, velocityUnits::pct);
-}
-
-void spinShooterForward(double percent  = 85) {
-  ShooterMotorA.spin(vex::forward, percent, velocityUnits::pct);
-  ShooterMotorB.spin(vex::forward, percent, velocityUnits::pct);
-}
-
-void spinShooterBackward() {
-  ShooterMotorA.spin(reverse);
-  ShooterMotorB.spin(reverse);
-}
-
-void stopShooter() {
-  ShooterMotorA.stop();
-  ShooterMotorB.stop();
-}
-
-void triggerInit() {
-  int i = 0;
-  TriggerMotor.setVelocity(5, percent);
-  
-  while(i < 5) {
-    double position = TriggerMotor.position(degrees);
-    TriggerMotor.spin(vex::forward, 5, percent);
-    wait(0.15, sec);
-    TriggerMotor.stop();
-    if (abs(position - TriggerMotor.position(degrees)) < 1) {
-      break;
-    }
-    i++;
-  }
-
-// // dumb init
-//   TriggerMotor.spin(forward, 10, percent);
-//   wait(0.5, sec);
-//   TriggerMotor.stop();
-
-  TriggerMotor.stop();
-}
-
-void trigger() {
-  TriggerMotor.setVelocity(40, percent);
-  double position = TriggerMotor.position(degrees);
-  
-  TriggerMotor.spinToPosition(position-38,degrees);
-  wait(0.2, sec);
-  TriggerMotor.spinToPosition(position,degrees);
-}
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -141,9 +96,8 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
   
   // initialization stuff
-  triggerInit();
-  //setShooterVelocityPct(92.0);
-  spinShooterForward(50);
+  Trigger::init();
+  Shooter::spinShooterForward(50);
 
   Inertial16.calibrate();
   odo.reset();
@@ -159,117 +113,12 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void twoHighAuto() {
-  // plan b for turning red
-  MecanumDrive::moveBack(20);
-  wait(1, sec);
-  MecanumDrive::stop();
-
-
-  MecanumDrive::adjustLeft(20);
-  wait(0.9, sec);
-  MecanumDrive::stop();
-
-  wait(0.2, sec);
-
-  // shoot two discs
-  spinShooterForward();
-  wait(4, sec);
-  trigger();
-  wait(0.5, sec);
-  trigger();
-  wait(0.2, sec);
-  stopShooter();
-
-  MecanumDrive::adjustRight(20);
-  wait(0.8,sec);
-  MecanumDrive::stop();
-
-  // move right
-  MecanumDrive::moveRight(20);
-  wait(4.9, sec);
-  MecanumDrive::stop();
-
-
-  // run back slowly
-  MecanumDrive::moveFront(20);
-  wait(1.1, sec);
-  MecanumDrive::stop();
-  
-  // roller
-  IntakeMotor.spin(vex::reverse, 100, percent);
-  wait(1.0, sec);
-  IntakeMotor.stop();
-}
-
-void threeLowAuto() {
-  MecanumDrive::moveBack(20);
-  wait(0.5, sec);
-  MecanumDrive::stop();
-
-  MecanumDrive::adjustRight(20);
-  wait(2.6, sec);
-  MecanumDrive::stop();
-
-  setShooterVelocityPct(50.0);
-  spinShooterForward();
-  wait(3, sec);
-  trigger();
-  wait(0.5, sec);
-  trigger();
-  wait(0.5, sec);
-  trigger();
-  wait(0.5, sec);
-
-  stopShooter();
-  setShooterVelocityPct(92.0);
-
-  MecanumDrive::adjustLeft(20);
-  wait(2.6, sec);
-  MecanumDrive::stop();
-
-  MecanumDrive::moveRight(20);
-  wait(3.9, sec);
-  MecanumDrive::stop();
-
-  // run back slowly
-  MecanumDrive::moveFront(20);
-  wait(0.3, sec);
-  MecanumDrive::stop();
-
-  MecanumDrive::moveRight(20);
-  wait(1.2, sec);
-  MecanumDrive::stop();
-
-  // run back slowly
-  MecanumDrive::moveFront(20);
-  wait(0.4, sec);
-  MecanumDrive::stop();
-  
-  // roller
-  IntakeMotor.spin(vex::reverse, 100, percent);
-  wait(1.0, sec);
-  IntakeMotor.stop();
-}
-
 void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
-  
-  // basic shooting two discs
 
-  // turn right/left 10 degrees
-  // double targetDegree = 10;
-  // MecanumDrive::autoTurn(targetDegree);
-  // while (Inertial16.heading(degrees) < targetDegree) {
-  //   wait(20, msec);
-  // }
-
-  // MecanumDrive::stop();
-
-  // twoHighAuto();
-  threeLowAuto();
+  AutoController::executeRoutine(AutoController::threeLowAuto);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -294,15 +143,15 @@ void usercontrol(void) {
   });*/
 
   Controller1.ButtonL1.pressed([](){
-    spinShooterForward(80);
+    Shooter::spinShooterForward(80);
   });
 
   Controller1.ButtonL1.released([](){
-    spinShooterForward(50);
+    Shooter::spinShooterForward(50);
   });
 
   Controller1.ButtonA.pressed([](){
-    trigger();
+    Trigger::launch();
   });
 
   Controller1.ButtonLeft.pressed([](){
@@ -366,30 +215,6 @@ void usercontrol(void) {
         MecanumDrive::stop();
       }
     }
-
-    
-    // IntakeMotor.spin(vex::reverse,Controller1.ButtonR2.pressing()*100,velocityUnits::pct);
-    
-    /*
-    if (Controller1.ButtonL1.pressing()) {
-      spinShooterForward();
-    } else {
-      stopShooter();
-    }*/
-
-    
-    // if (Controller1.ButtonR1.pressing()) {
-    //   IntakeMotor.spin(vex::forward,100,velocityUnits::pct);
-    // } else {
-    //   // stop the intake when releasing button?
-    //   IntakeMotor.stop();
-    // }
-    // if (Controller1.ButtonR2.pressing()) {
-
-    //   IntakeMotor.spin(vex::reverse, 100, velocityUnits::pct);
-    // } else {
-    //   IntakeMotor.stop();
-    // }
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
