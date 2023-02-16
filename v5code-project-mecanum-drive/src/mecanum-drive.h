@@ -71,7 +71,24 @@ public:
         , velocityUnits::pct);
   }
 
-  
+  static void drive(double y, double x, double theta) {
+    x /= 100;
+    y /= 100;
+    theta /= 100;
+    
+    x = pow(x, 2) * ((x > 0) ? 1 : -1);
+    y = pow(y, 2) * ((y > 0) ? 1 : -1);
+    theta = pow(theta, 2) * ((theta > 0) ? 1 : -1);
+
+    x *= 100;
+    y *= 100;
+    theta *= 100;
+
+    ChassisLF.spin(directionType::fwd, -y - x - theta, velocityUnits::pct);
+    ChassisRR.spin(directionType::fwd,  y + x - theta, velocityUnits::pct);
+    ChassisRF.spin(directionType::fwd, -y + x + theta, velocityUnits::pct);
+    ChassisLR.spin(directionType::fwd,  y - x + theta, velocityUnits::pct);
+  }
 
   static void stop() {
     ChassisLF.stop();
