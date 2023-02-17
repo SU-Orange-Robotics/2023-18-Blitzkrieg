@@ -168,13 +168,21 @@ void usercontrol(void) {
     IntakeMotor.spin(vex::forward,100,velocityUnits::pct);
   });
 
+  Controller1.ButtonR1.released([](){
+    IntakeMotor.stop();
+  });
+
   Controller1.ButtonR2.pressed([](){
     IntakeMotor.spin(vex::reverse, 100, velocityUnits::pct);
   });
 
-  Controller1.ButtonX.pressed([]() {
+  Controller1.ButtonR2.released([](){
     IntakeMotor.stop();
   });
+  /*
+  Controller1.ButtonX.pressed([]() {
+    IntakeMotor.stop();
+  });*/
 
   odo.reset();
 
