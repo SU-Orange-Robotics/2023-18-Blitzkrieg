@@ -61,9 +61,9 @@
 #include "robot-config.h"
 
 #include "mecanum-drive.h"
-#include "odometry.h"
 #include "trigger.h"
 #include "shooter.h"
+#include "odometry.h"
 #include "auto-controller.h"
 
 #include <cmath>
@@ -183,6 +183,10 @@ void usercontrol(void) {
   Controller1.ButtonX.pressed([]() {
     IntakeMotor.stop();
   });*/
+  /*
+  Controller1.ButtonX.pressed([](){
+    MecanumDrive::shootToNearGoal(odo);
+  });*/
 
   odo.reset();
 
@@ -242,9 +246,7 @@ int main() {
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
-    // odo.updateOdometry();
-    // wait(0.5, seconds);
-    // odo.printLocation();
+    odo.updateOdometry();
 
     wait(50, msec);
   }

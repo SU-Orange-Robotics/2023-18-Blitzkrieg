@@ -57,6 +57,18 @@ public:
     Center.resetPosition();
   }
 
+  double getX() {
+    return locationX;
+  }
+
+  double gety() {
+    return locationY;
+  }
+
+  double getTheta() {
+    return locationTheta;
+  }
+
   vector<double> getLocation() {
     return { locationX, locationY, locationTheta };
   }

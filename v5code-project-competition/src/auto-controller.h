@@ -5,7 +5,6 @@
 
 #include "mecanum-drive.h"
 #include "trigger.h"
-#include "odometry.h"
 #include "gyro.h"
 #include "shooter.h"
 
