@@ -97,7 +97,7 @@ void pre_auton(void) {
   
   // initialization stuff
   Trigger::init();
-  Shooter::spinShooterForward(50);
+  // Shooter::spinShooterForward(50);
 
   Inertial16.calibrate();
   odo.reset();
@@ -179,16 +179,6 @@ void usercontrol(void) {
   Controller1.ButtonR2.released([](){
     IntakeMotor.stop();
   });
-  /*
-  Controller1.ButtonX.pressed([]() {
-    IntakeMotor.stop();
-  });*/
-  /*
-  Controller1.ButtonX.pressed([](){
-    MecanumDrive::shootToNearGoal(odo);
-  });*/
-
-  odo.reset();
 
   double turnImportance = 0.5;
   while (1) {
@@ -213,23 +203,11 @@ void usercontrol(void) {
 
     }
 
-    {
-      // if (Controller1.ButtonLeft.pressing()) {
-      //   MecanumDrive::adjustLeft(20);
-      // } else {
-      //   angleAjustTimer.reset();
-      // }
-      // if (Controller1.ButtonRight.pressing()) {
-      //   MecanumDrive::adjustRight(20);
-      // }
-
-      if ((Controller1.ButtonLeft.pressing() || Controller1.ButtonRight.pressing()) && angleAjustTimer.time(vex::sec) > 0.2) {
-        MecanumDrive::stop();
-      }
-    }
+    odo.printLocation();
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
+
   }
 }
 

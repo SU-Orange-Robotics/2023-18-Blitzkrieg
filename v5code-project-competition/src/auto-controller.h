@@ -110,6 +110,5 @@ public:
     wait(1.0, sec);
     IntakeMotor.stop();
   }
-
-
+  
 };
