@@ -7,6 +7,26 @@
 class MecanumDrive {
   
 public:
+  
+    // basic function to drive to location
+  static void driveToLocation(double y, double x, double theta) {
+    while(true){
+      // gets current location and assigns them
+      new_x = (odometry::getLocation()[0]);
+      new_y = (odometry::getLocation()[1]);
+      // if the new location - intitial location >= 1 break, then stop
+      if (abs(x_new - x) >= 2 && abs(y_new - y) >= 2){
+        break;
+      }
+      // else drive to position
+      else{
+        drive(y, x, theta);
+      }
+    }
+    // loop breaks and motors stop
+    stop();
+  }
+  
   static void adjustLeft(double speed) {
     ChassisLF.spin(directionType::fwd,speed, velocityUnits::pct);
     ChassisRR.spin(directionType::fwd,speed, velocityUnits::pct);
