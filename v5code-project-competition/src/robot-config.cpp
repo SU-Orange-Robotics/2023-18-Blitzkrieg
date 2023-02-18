@@ -1,4 +1,5 @@
 #include "vex.h"
+//#include "odometry.h"
 
 using namespace vex;
 using signature = vision::signature;
@@ -9,21 +10,22 @@ brain  Brain;
 
 // VEXcode device constructors
 controller Controller1 = controller(primary);
-motor ChassisLR = motor(PORT11, ratio18_1, false);
-motor ChassisLF = motor(PORT13, ratio18_1, false);
-motor ChassisRF = motor(PORT14, ratio18_1, true);
-motor ChassisRR = motor(PORT12, ratio18_1, true);
-rotation Left = rotation(PORT1, true);
-rotation Right = rotation(PORT20, true);
-rotation Center = rotation(PORT3, true);
-motor IntakeMotor = motor(PORT10, ratio36_1, true);
-motor TriggerMotor = motor(PORT8, ratio18_1, false);
-motor ShooterMotorA = motor(PORT2, ratio6_1, false);
-motor ShooterMotorB = motor(PORT17, ratio6_1, true);
+motor ChassisLF = motor(PORT8, ratio18_1, false);
+motor ChassisLR = motor(PORT6, ratio18_1, false);
+motor ChassisRF = motor(PORT7, ratio18_1, true);
+motor ChassisRR = motor(PORT5, ratio18_1, true);
+rotation Left = rotation(PORT20, true);
+rotation Right = rotation(PORT19, true);
+rotation Center = rotation(PORT11, true);
+motor IntakeMotor = motor(PORT18, ratio36_1, true);
+motor TriggerMotor = motor(PORT17, ratio18_1, false);
+motor ShooterMotorA = motor(PORT9, ratio6_1, false);
+motor ShooterMotorB = motor(PORT10, ratio6_1, true);
 inertial Inertial16 = inertial(PORT16);
 
 // custom made variables/objects
 vex::timer angleAjustTimer;
+//Odometry odo;
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

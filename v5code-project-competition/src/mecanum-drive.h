@@ -1,6 +1,8 @@
 #pragma once
 
 #include "vex.h"
+//#include "robot-config.h"
+#include "odometry.h"
 
 class MecanumDrive {
   
@@ -84,11 +86,54 @@ public:
     y *= 100;
     theta *= 100;
 
+    //if (x + y + theta >= 3) {
+    ChassisLF.spin(directionType::fwd, -y - x - theta, velocityUnits::pct);
+    ChassisRR.spin(directionType::fwd,  y + x - theta, velocityUnits::pct);
+    ChassisRF.spin(directionType::fwd, -y + x + theta, velocityUnits::pct);
+    ChassisLR.spin(directionType::fwd,  y - x + theta, velocityUnits::pct);
+    //}
+  }
+
+  static void drivePure(double y, double x, double theta) {
     ChassisLF.spin(directionType::fwd, -y - x - theta, velocityUnits::pct);
     ChassisRR.spin(directionType::fwd,  y + x - theta, velocityUnits::pct);
     ChassisRF.spin(directionType::fwd, -y + x + theta, velocityUnits::pct);
     ChassisLR.spin(directionType::fwd,  y - x + theta, velocityUnits::pct);
   }
+  
+  static void turnToHeading(double lowBound, double uppBound, bool dir, Odometry& odo) { //dir = true --> counterclockwise
+    while (true) {
+      double currHeading = fmod(odo.getTheta(), 2*3.14159);
+      if (currHeading >= lowBound && currHeading <= uppBound) {
+        break;
+      }
+      drivePure(0, 0, dir ? -50 : 50);
+    }
+  }
+
+  static void shootToNearGoal(Odometry& odo) {
+    double botX = odo.getX();
+    double botY = odo.gety();
+    double goalX = 0;
+    double goalY = 0;
+
+    double goalHeading = tan((botY - goalY) / (botX - goalX));
+
+    goalHeading = goalHeading < 0 ? goalHeading += 2*3.14159 : goalHeading;
+
+    turnToHeading(goalHeading - 3.14159/24, goalHeading + 3.14159/24, false, odo);
+  }
+  /*
+  static void shootToFarGoal(Odometry& odo) {
+    double botX = odo.getX();
+    double botY = odo.gety();
+    double goalX = 0;
+    double goalY = 0;
+
+    double goalHeading = tan((botY - goalY) / (botX - goalX));
+
+    turnToHeading(goalHeading - 3.14159/30, goalHeading + 3.14159/30, false, odo);
+  }*/
 
   static void stop() {
     ChassisLF.stop();
