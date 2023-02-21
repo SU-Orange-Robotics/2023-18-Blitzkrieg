@@ -10,7 +10,7 @@ public:
     ShooterMotorB.setVelocity(percentage, velocityUnits::pct);
   }
 
-  static void spinShooterForward(double percent  = 85) {
+  static void spinShooterForward(double percent) {
     ShooterMotorA.spin(vex::forward, percent, velocityUnits::pct);
     ShooterMotorB.spin(vex::forward, percent, velocityUnits::pct);
   }
