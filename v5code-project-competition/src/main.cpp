@@ -112,156 +112,7 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void skilledAuto() {
-  
-  MecanumDrive::moveBack(20);
-    wait(0.53, sec);
-    MecanumDrive::stop();
 
-    MecanumDrive::adjustRight(20);
-    wait(2.5, sec);
-    MecanumDrive::stop();
-    wait(1, sec);
-
-    Shooter::setShooterVelocityPct(80);
-    Shooter::spinShooterForward(80);
-    wait(10, sec);
-    Trigger::launch();
-    wait(6, sec);
-    Trigger::launch();
-    wait(1, sec);
-    Trigger::launch();
-    wait(1, sec);
-    Trigger::launch();
-    wait(1, sec);
-    Trigger::launch();
-    wait(1, sec);
-    Trigger::launch();
-    wait(0.5, sec);
-    Shooter::stopShooter();
-
-    MecanumDrive::adjustLeft(20);
-    wait(2.5, sec);
-    MecanumDrive::stop();
-
-    MecanumDrive::moveRight(20);
-    wait(3.8, sec);
-    MecanumDrive::stop();
-
-    // run back slowly
-    MecanumDrive::moveFront(20);
-    wait(0.2, sec);
-    MecanumDrive::stop();
-
-    MecanumDrive::moveRight(20);
-    wait(.50, sec);
-    MecanumDrive::stop();
-
-    // run back slowly
-    MecanumDrive::moveFront(18);
-    wait(0.3, sec);
-
-    
-    // roller
-    IntakeMotor.spin(vex::reverse, 100, percent);
-    wait(1.0, sec);
-    IntakeMotor.stop();
-    MecanumDrive::stop();
-
-    // skill only auto, second roller
-    MecanumDrive::moveRight(20);
-    wait(0.5, sec);
-    MecanumDrive::stop();
-    MecanumDrive::moveBack( 20);
-    wait(2.3, sec);
-    MecanumDrive::stop();
-
-    MecanumDrive::adjustRight(20);
-    wait(2.6, sec);
-    MecanumDrive::stop();
-
-    MecanumDrive::moveFront( 20);
-    wait(2.0, sec); // 
-    MecanumDrive::stop();
-    wait(0.5, sec);
-    
-    // roller
-    IntakeMotor.spin(vex::reverse, 100, percent);
-    MecanumDrive::moveFront( 18);
-    wait(1.2, sec);
-    IntakeMotor.stop();
-    MecanumDrive::stop();
-
-    // move back a bit more
-
-    MecanumDrive::moveBack( 20);
-    wait(2.0, sec); // 
-    MecanumDrive::stop();
-
-    wait(0.5, sec);
-    MecanumDrive::moveLeft(20);
-    wait(0.5, sec);
-    MecanumDrive::stop();
-
-}
-
-void userAuto() {
-  
-  MecanumDrive::moveBack(20);
-  wait(0.53, sec);
-  MecanumDrive::stop();
-
-  MecanumDrive::adjustRight(20);
-  wait(2.5, sec);
-  MecanumDrive::stop();
-  wait(1, sec);
-
-  Shooter::setShooterVelocityPct(60);
-  Shooter::spinShooterForward(60);
-  wait(10, sec);
-  Trigger::launch();
-  wait(6, sec);
-  Trigger::launch();
-  wait(1, sec);
-  Trigger::launch();
-  wait(1, sec);
-  Trigger::launch();
-  wait(1, sec);
-  Trigger::launch();
-  wait(1, sec);
-  Trigger::launch();
-  wait(0.5, sec);
-  Shooter::stopShooter();
-
-  MecanumDrive::adjustLeft(20);
-  wait(2.5, sec);
-  MecanumDrive::stop();
-
-  MecanumDrive::moveRight(20);
-  wait(3.8, sec);
-  MecanumDrive::stop();
-
-  // run back slowly
-  MecanumDrive::moveFront(20);
-  wait(0.2, sec);
-  MecanumDrive::stop();
-
-  MecanumDrive::moveRight(20);
-  wait(.50, sec);
-  MecanumDrive::stop();
-
-  // run back slowly
-  MecanumDrive::moveFront(18);
-  wait(0.3, sec);
-
-  
-  // roller
-  IntakeMotor.spin(vex::reverse, 100, percent);
-  wait(1.0, sec);
-  IntakeMotor.stop();
-  MecanumDrive::stop();
-
-}
 void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
@@ -272,8 +123,6 @@ void autonomous(void) {
   // wait(0.3, sec);
   // MecanumDrive::stop();
 
-    // skilledAuto();
-    userAuto();
 }
 
 
@@ -297,16 +146,16 @@ void usercontrol(void) {
   /*Controller1.ButtonL2.pressed([](){
     stopShooter();
   });*/
-
   
 
-  Controller1.ButtonL1.pressed([](){
-    Shooter::spinShooterForward(79);
-  });
-
-  Controller1.ButtonL1.released([](){
-    Shooter::spinShooterForward(50);
-  });
+  // idling -- dont use duirng practice, causing overheat
+  // Controller1.ButtonL1.pressed([](){
+  //   Shooter::spinShooterForward(79);
+  // });
+  // Shooter::spinShooterForward(50);
+  // Controller1.ButtonL1.released([](){
+  //   Shooter::spinShooterForward(50);
+  // });
 
   Controller1.ButtonA.pressed([](){
     Trigger::launch();
@@ -358,6 +207,11 @@ void usercontrol(void) {
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.
     // ........................................................................
+    if (Controller1.ButtonL1.pressing()) {
+      Shooter::spinShooterForward(79);
+    } else {
+      Shooter::stopShooter();
+    }
 
 
     {
