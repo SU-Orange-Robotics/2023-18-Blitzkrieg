@@ -4,12 +4,15 @@
 #include <vector>
 #include <string>
 // #include <string.h>
+#include <math.h>
 
 #include "vex.h"
 
 using namespace vex;
 
 using namespace std;
+
+
 
 class Odometry {
 
@@ -23,30 +26,21 @@ private:
   double locationTheta;
 
 // measure the robot to set this
-  const double width = 6.5;
-  const double length = 16;
-  const double circ = 4 * 3.1415926;
+  const double width = 6.5;   // distance from center of bot -> back tracking wheel
+  const double length = 13.8; // distance between center of left and rigtht wheels
+  const double circ = 4 * M_PI;
 
 
 public:
   Odometry() {
-    locationX = 0.0;
-    locationY = 0.0;
-    locationTheta = 0.0;
-
-    encoderLeft = 0.0;
-    encoderRight = 0.0;
-    encoderCenter = 0.0;
-
-    Left.resetPosition();
-    Right.resetPosition();
-    Center.resetPosition();
+    reset();
   }
 
+  // aginst rite side white lane. facing up. (x = 86, y = 8, t = pi/2)
   void reset() {
-    locationX = 0.0;
-    locationY = 0.0;
-    locationTheta = 0.0;
+    locationX = 86.0;
+    locationY = 8.0;
+    locationTheta = M_PI / 2;
 
     encoderLeft = 0.0;
     encoderRight = 0.0;
@@ -61,7 +55,7 @@ public:
     return locationX;
   }
 
-  double gety() {
+  double getY() {
     return locationY;
   }
 
@@ -87,7 +81,20 @@ public:
     Brain.Screen.newLine();
     Brain.Screen.print("Theta: %f", locationTheta);
 
-    wait(1, seconds);
+
+    Controller1.Screen.setCursor(0,0);
+    Controller1.Screen.clearScreen();
+    
+    Controller1.Screen.setCursor(1, 1);
+    Controller1.Screen.print("X: %f", locationX);
+
+    // Display the Y position on row 2
+    Controller1.Screen.newLine();
+    Controller1.Screen.print("Y: %f", locationY);
+
+    // Display the Z position on row 3
+    Controller1.Screen.newLine();
+    Controller1.Screen.print("Theta: %f", locationTheta);
   }
 
   void updateOdometry() {

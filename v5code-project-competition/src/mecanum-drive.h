@@ -3,10 +3,17 @@
 #include "vex.h"
 //#include "robot-config.h"
 #include "odometry.h"
+#include <cmath>
+#include <iostream>
+
+double calculateDistance(double x1, double x2, double y1, double y2) {
+  return pow(abs(x1 - x2), 2) + pow(abs(y1 - y2), 2);
+}
 
 class MecanumDrive {
   
 public:
+  
   static void adjustLeft(double speed) {
     ChassisLF.spin(directionType::fwd,speed, velocityUnits::pct);
     ChassisRR.spin(directionType::fwd,speed, velocityUnits::pct);
@@ -63,14 +70,25 @@ public:
   }
 
   static void moveRight(double speed) {
-        ChassisLF.spin(directionType::fwd, -speed
-        , velocityUnits::pct);
-        ChassisRR.spin(directionType::fwd,speed
-        , velocityUnits::pct);
-        ChassisRF.spin(directionType::fwd,speed
-        , velocityUnits::pct);
-        ChassisLR.spin(directionType::fwd, -speed
-        , velocityUnits::pct);
+    ChassisLF.spin(directionType::fwd, -speed
+    , velocityUnits::pct);
+    ChassisRR.spin(directionType::fwd,speed
+    , velocityUnits::pct);
+    ChassisRF.spin(directionType::fwd,speed
+    , velocityUnits::pct);
+    ChassisLR.spin(directionType::fwd, -speed
+    , velocityUnits::pct);
+  }
+
+  static void moveLeft(double speed) {
+    ChassisLF.spin(directionType::fwd, speed
+    , velocityUnits::pct);
+    ChassisRR.spin(directionType::fwd, -speed
+    , velocityUnits::pct);
+    ChassisRF.spin(directionType::fwd, -speed
+    , velocityUnits::pct);
+    ChassisLR.spin(directionType::fwd, speed
+    , velocityUnits::pct);
   }
 
   static void drive(double y, double x, double theta) {
@@ -111,9 +129,50 @@ public:
     }
   }
 
+  // simply drive to a certain location by diriving forward, only temporary solution
+  // basic function to drive to location, assume already facing the location
+  static void driveToLocation(double x, double y, Odometry& odo, double speed) {
+    // stage 1: turn to that location
+    turnTowardsLocation(x, y, odo);
+
+    // stage 2: drive forward
+    while(true){
+      odo.updateOdometry();
+      odo.printLocation();
+      // gets current location and assigns them
+      double x_new = odo.getX();
+      double y_new = odo.getY();
+      // if the new location - intitial location >= 1 break, then stop
+      if (abs(x_new - x) <= 5 && abs(y_new - y) <= 5){
+        cout << "reaching the point" << endl;
+        break;
+      }
+      // else drive to position
+      else{
+        moveFront(speed);
+      }
+    }
+
+    // loop breaks and motors stop
+    stop();
+  }
+
+  // simple turn until feature - need to do better in future
+  static void turnToTheta(double targetTheta, Odometry& odo) {
+    while (odo.getTheta() < (targetTheta - 0.05) || odo.getTheta() > (targetTheta + 0.05) ) {
+      adjustLeft(20); 
+    }
+
+    stop();
+  }
+
+  static void turnTowardsLocation(double x, double y, Odometry& odo) {
+    
+  }
+
   static void shootToNearGoal(Odometry& odo) {
     double botX = odo.getX();
-    double botY = odo.gety();
+    double botY = odo.getY();
     double goalX = 0;
     double goalY = 0;
 

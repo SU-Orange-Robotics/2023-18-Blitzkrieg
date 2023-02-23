@@ -97,7 +97,6 @@ void pre_auton(void) {
   
   // initialization stuff
   Trigger::init();
-  Shooter::spinShooterForward(50);
 
   Inertial16.calibrate();
   odo.reset();
@@ -113,13 +112,17 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+
 void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
 
-  AutoController::executeRoutine(AutoController::threeLowAuto);
+  MecanumDrive::driveToLocation(86, 17.39, odo, 50);
+  wait(0.2, sec);
+  MecanumDrive::turnToTheta(M_PI, odo); 
 }
+
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -141,14 +144,16 @@ void usercontrol(void) {
   /*Controller1.ButtonL2.pressed([](){
     stopShooter();
   });*/
+  
 
-  Controller1.ButtonL1.pressed([](){
-    Shooter::spinShooterForward(80);
-  });
-
-  Controller1.ButtonL1.released([](){
-    Shooter::spinShooterForward(50);
-  });
+  // idling -- dont use duirng practice, causing overheat
+  // Controller1.ButtonL1.pressed([](){
+  //   Shooter::spinShooterForward(79);
+  // });
+  // Shooter::spinShooterForward(50);
+  // Controller1.ButtonL1.released([](){
+  //   Shooter::spinShooterForward(50);
+  // });
 
   Controller1.ButtonA.pressed([](){
     Trigger::launch();
@@ -179,16 +184,16 @@ void usercontrol(void) {
   Controller1.ButtonR2.released([](){
     IntakeMotor.stop();
   });
-  /*
-  Controller1.ButtonX.pressed([]() {
-    IntakeMotor.stop();
-  });*/
-  /*
-  Controller1.ButtonX.pressed([](){
-    MecanumDrive::shootToNearGoal(odo);
-  });*/
 
-  odo.reset();
+  Controller1.ButtonLeft.pressed([](){
+    MecanumDrive::adjustLeft(18);
+    angleAjustTimer.reset();
+  });
+
+  Controller1.ButtonRight.pressed([](){
+    MecanumDrive::adjustRight(18);
+    angleAjustTimer.reset();
+  });
 
   double turnImportance = 0.5;
   while (1) {
@@ -200,7 +205,12 @@ void usercontrol(void) {
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.
     // ........................................................................
-
+    if (Controller1.ButtonL1.pressing()) {
+      Shooter::spinShooterForward(79);
+    } else {
+      Shooter::stopShooter();
+    }
+ 
 
     {
       if (!Controller1.ButtonLeft.pressing() && !Controller1.ButtonRight.pressing()) {
@@ -210,26 +220,13 @@ void usercontrol(void) {
           MecanumDrive::drive(-Controller1.Axis3.value(), -Controller1.Axis4.value(), Controller1.Axis1.value());
         }
       }
-
     }
 
-    {
-      // if (Controller1.ButtonLeft.pressing()) {
-      //   MecanumDrive::adjustLeft(20);
-      // } else {
-      //   angleAjustTimer.reset();
-      // }
-      // if (Controller1.ButtonRight.pressing()) {
-      //   MecanumDrive::adjustRight(20);
-      // }
-
-      if ((Controller1.ButtonLeft.pressing() || Controller1.ButtonRight.pressing()) && angleAjustTimer.time(vex::sec) > 0.2) {
-        MecanumDrive::stop();
-      }
-    }
+    odo.printLocation();
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
+
   }
 }
 
