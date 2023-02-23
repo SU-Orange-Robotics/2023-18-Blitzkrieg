@@ -119,10 +119,8 @@ void autonomous(void) {
   // ..........................................................................
 
   MecanumDrive::driveToLocation(86, 17.39, odo, 50);
-  // MecanumDrive::moveFront(30);
-  // wait(0.3, sec);
-  // MecanumDrive::stop();
-
+  wait(0.2, sec);
+  MecanumDrive::turnToTheta(M_PI, odo); 
 }
 
 

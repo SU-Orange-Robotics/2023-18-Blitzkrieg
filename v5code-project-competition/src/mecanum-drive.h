@@ -157,8 +157,13 @@ public:
     stop();
   }
 
+  // simple turn until feature - need to do better in future
   static void turnToTheta(double targetTheta, Odometry& odo) {
-    
+    while (odo.getTheta() < (targetTheta - 0.05) || odo.getTheta() > (targetTheta + 0.05) ) {
+      adjustLeft(20); 
+    }
+
+    stop();
   }
 
   static void turnTowardsLocation(double x, double y, Odometry& odo) {
