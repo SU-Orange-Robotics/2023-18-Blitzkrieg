@@ -118,7 +118,7 @@ void autonomous(void) {
   // Insert autonomous user code here.
   // ..........................................................................
 
-  // MecanumDrive::driveToLocation(86, 17.39, odo, 50);
+  MecanumDrive::driveToLocation(86, 17.39, odo, 50);
   // MecanumDrive::moveFront(30);
   // wait(0.3, sec);
   // MecanumDrive::stop();
@@ -212,7 +212,7 @@ void usercontrol(void) {
     } else {
       Shooter::stopShooter();
     }
-
+ 
 
     {
       if (!Controller1.ButtonLeft.pressing() && !Controller1.ButtonRight.pressing()) {

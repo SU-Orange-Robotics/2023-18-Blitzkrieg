@@ -36,10 +36,11 @@ public:
     reset();
   }
 
+  // aginst rite side white lane. facing up. (x = 86, y = 8, t = pi/2)
   void reset() {
     locationX = 86.0;
     locationY = 8.0;
-    locationTheta = 0.0;
+    locationTheta = M_PI / 2;
 
     encoderLeft = 0.0;
     encoderRight = 0.0;
