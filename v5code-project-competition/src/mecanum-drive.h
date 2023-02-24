@@ -118,15 +118,24 @@ public:
     ChassisRF.spin(directionType::fwd, -y + x + theta, velocityUnits::pct);
     ChassisLR.spin(directionType::fwd,  y - x + theta, velocityUnits::pct);
   }
-  
-  static void turnToHeading(double lowBound, double uppBound, bool dir, Odometry& odo) { //dir = true --> counterclockwise
-    while (true) {
-      double currHeading = fmod(odo.getTheta(), 2*3.14159);
-      if (currHeading >= lowBound && currHeading <= uppBound) {
-        break;
-      }
-      drivePure(0, 0, dir ? -50 : 50);
+
+  static double getTarget(double target, Odometry& odo) {
+    double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
+    if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
+      currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
     }
+    double targetPos = odo.getTheta() + (target - currHeading) * -1;
+    return targetPos;
+  }
+  
+  static void turnToHeading(double targetHeading, Odometry& odo) { //dir = true --> counterclockwise
+    double targetAngle = getTarget(targetHeading, odo);
+    while (odo.getTheta() < (targetAngle - 0.05) || odo.getTheta() > (targetAngle + 0.05)) {
+      //drivePure(0, 0, (targetAngle > odo.getTheta()) ? 20 : -20);
+      adjustRight(targetAngle > odo.getTheta() ? 20 : -20);
+      //targetAngle = getTarget(targetHeading, odo);
+    }
+    stop();
   }
 
   // simply drive to a certain location by diriving forward, only temporary solution
@@ -180,7 +189,7 @@ public:
 
     goalHeading = goalHeading < 0 ? goalHeading += 2*3.14159 : goalHeading;
 
-    turnToHeading(goalHeading - 3.14159/24, goalHeading + 3.14159/24, false, odo);
+    turnToHeading(goalHeading, odo);
   }
   /*
   static void shootToFarGoal(Odometry& odo) {

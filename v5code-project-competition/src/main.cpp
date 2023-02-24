@@ -120,7 +120,8 @@ void autonomous(void) {
 
   MecanumDrive::driveToLocation(86, 17.39, odo, 50);
   wait(0.2, sec);
-  MecanumDrive::turnToTheta(M_PI, odo); 
+  //MecanumDrive::turnToTheta(M_PI, odo); 
+  MecanumDrive::turnToHeading(-M_PI + 0.001, odo);
 }
 
 
@@ -155,7 +156,7 @@ void usercontrol(void) {
   //   Shooter::spinShooterForward(50);
   // });
 
-  Controller1.ButtonA.pressed([](){
+  Controller1.ButtonA.pressed([](){ 
     Trigger::launch();
   });
 
