@@ -72,6 +72,7 @@ using namespace vex;
 
 // A global instance of competition
 competition Competition;
+MecanumDrive mecDrive;
 Odometry odo; // not correct, need to add to robot-config later
 
 // define your global instances of motors and other devices here
@@ -113,15 +114,16 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 
-void autonomous(void) {
+void autonomous(void) { 
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
 
-  MecanumDrive::driveToLocation(86, 17.39, odo, 50);
+  mecDrive.driveToLocation(86, 17.39, odo, 50);
   wait(0.2, sec);
-  //MecanumDrive::turnToTheta(M_PI, odo); 
-  MecanumDrive::turnToHeading(-M_PI + 0.001, odo);
+  //mecDrive.turnToTheta(M_PI, odo); 
+  //mecDrive.turnToHeading(-M_PI + 0.001, odo);
+  mecDrive.turnPID(-2*M_PI/3, odo); 
 }
 
 

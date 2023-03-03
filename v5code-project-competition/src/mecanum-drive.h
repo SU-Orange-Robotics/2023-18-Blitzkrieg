@@ -13,7 +13,7 @@ double calculateDistance(double x1, double x2, double y1, double y2) {
 class MecanumDrive {
   
 public:
-  
+
   static void adjustLeft(double speed) {
     ChassisLF.spin(directionType::fwd,speed, velocityUnits::pct);
     ChassisRR.spin(directionType::fwd,speed, velocityUnits::pct);
@@ -119,16 +119,66 @@ public:
     ChassisLR.spin(directionType::fwd,  y - x + theta, velocityUnits::pct);
   }
 
-  static double getTarget(double target, Odometry& odo) {
+  double getError(double target, Odometry& odo) {
     double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
     if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
       currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
     }
-    double targetPos = odo.getTheta() + (target - currHeading) * -1;
+    double error = currHeading - target;
+    return error;
+  }
+
+  double getTarget(double target, Odometry& odo) {
+    /*double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
+    if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
+      currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
+    }
+    double error = currHeading - target;*/
+    double error = getError(target, odo);
+    double targetPos = odo.getTheta() + error;
     return targetPos;
   }
+
+  const double P = 100; //80
+  const double I = 0;
+  const double D = 0.00;
+
+  vex::timer pid_timer;
   
-  static void turnToHeading(double targetHeading, Odometry& odo) { //dir = true --> counterclockwise
+  void turnPID(double targetHeading, Odometry& odo) {
+    double error = 0;
+    double errorLast;
+    double lastTime = 0;
+    double dt;
+    double integrationStored = 0;
+    pid_timer.reset();
+    while(true) {
+      errorLast = error;
+      error = getError(targetHeading, odo);
+      dt = pid_timer.time() - lastTime;
+
+      double P_comp = P * error;
+      double D_comp = 0;
+
+      if (errorLast != 0) {
+        double D_comp = D * (error - errorLast) / dt;
+      }
+
+      integrationStored += (error * dt);
+      double I_comp = I * integrationStored;
+
+      double output = P_comp + I_comp + D_comp;
+
+      adjustRight(output);
+
+      if (abs(error) < 0.02 && abs((error-errorLast)/dt) < 0.02) {
+        break;
+      }
+    }
+    stop();
+  }
+
+  void turnToHeading(double targetHeading, Odometry& odo) {
     double targetAngle = getTarget(targetHeading, odo);
     while (odo.getTheta() < (targetAngle - 0.05) || odo.getTheta() > (targetAngle + 0.05)) {
       //drivePure(0, 0, (targetAngle > odo.getTheta()) ? 20 : -20);
@@ -140,7 +190,7 @@ public:
 
   // simply drive to a certain location by diriving forward, only temporary solution
   // basic function to drive to location, assume already facing the location
-  static void driveToLocation(double x, double y, Odometry& odo, double speed) {
+  void driveToLocation(double x, double y, Odometry& odo, double speed) {
     // stage 1: turn to that location
     turnTowardsLocation(x, y, odo);
 
@@ -167,7 +217,7 @@ public:
   }
 
   // simple turn until feature - need to do better in future
-  static void turnToTheta(double targetTheta, Odometry& odo) {
+  void turnToTheta(double targetTheta, Odometry& odo) {
     while (odo.getTheta() < (targetTheta - 0.05) || odo.getTheta() > (targetTheta + 0.05) ) {
       adjustLeft(20); 
     }
@@ -175,11 +225,11 @@ public:
     stop();
   }
 
-  static void turnTowardsLocation(double x, double y, Odometry& odo) {
+  void turnTowardsLocation(double x, double y, Odometry& odo) {
     
   }
 
-  static void shootToNearGoal(Odometry& odo) {
+  void shootToNearGoal(Odometry& odo) {
     double botX = odo.getX();
     double botY = odo.getY();
     double goalX = 0;
