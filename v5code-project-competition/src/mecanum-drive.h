@@ -13,7 +13,6 @@ double calculateDistance(double x1, double x2, double y1, double y2) {
 class MecanumDrive {
   
 public:
-
   static void adjustLeft(double speed) {
     ChassisLF.spin(directionType::fwd,speed, velocityUnits::pct);
     ChassisRR.spin(directionType::fwd,speed, velocityUnits::pct);
@@ -190,6 +189,7 @@ public:
 
   // simply drive to a certain location by diriving forward, only temporary solution
   // basic function to drive to location, assume already facing the location
+
   void driveToLocation(double x, double y, Odometry& odo, double speed) {
     // stage 1: turn to that location
     turnTowardsLocation(x, y, odo);
@@ -225,11 +225,13 @@ public:
     stop();
   }
 
+
   void turnTowardsLocation(double x, double y, Odometry& odo) {
     
   }
 
   void shootToNearGoal(Odometry& odo) {
+
     double botX = odo.getX();
     double botY = odo.getY();
     double goalX = 0;
