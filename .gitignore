@@ -1,3 +1,4 @@
 build/
 */.DS_Store
 .DS_Store
+v5code-project-competition/compile_commands.json

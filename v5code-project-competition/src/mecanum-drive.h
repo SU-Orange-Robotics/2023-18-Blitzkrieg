@@ -127,6 +127,23 @@ public:
     return error;
   }
 
+  double getError2(double target, Odometry& odo) {
+    double currAngle = odo.getTheta();
+    int rotations = currAngle > 0 ? floor(currAngle / 2*M_PI) : ceil(currAngle / 2*M_PI);
+
+    double trueTarget1 = target + (rotations * 2*M_PI);
+    double trueTarget2 = trueTarget1 > 0 ? trueTarget1 - 2*M_PI : trueTarget1 + 2*M_PI;
+    
+    double error1 = trueTarget1 - currAngle;
+    double error2 = trueTarget2 - currAngle;
+
+    if (abs(error1) > abs(error2)) {
+      return error2;
+    } else {
+      return error1;
+    }
+  }
+
   double getTarget(double target, Odometry& odo) {
     /*double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
     if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
@@ -153,7 +170,7 @@ public:
     pid_timer.reset();
     while(true) {
       errorLast = error;
-      error = getError(targetHeading, odo);
+      error = getError2(targetHeading, odo);
       dt = pid_timer.time() - lastTime;
 
       double P_comp = P * error;
@@ -241,7 +258,7 @@ public:
 
     goalHeading = goalHeading < 0 ? goalHeading += 2*3.14159 : goalHeading;
 
-    turnToHeading(goalHeading, odo);
+    turnPID(goalHeading, odo);
   }
   /*
   static void shootToFarGoal(Odometry& odo) {
