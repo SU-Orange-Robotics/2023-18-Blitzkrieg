@@ -215,6 +215,46 @@ public:
     // loop breaks and motors stop
     stop();
   }
+  
+  // find error between target point, and current point
+  double getDistanceError(double targetX, double targetY, Odometry& odo){
+
+    // get current x, and y position
+    double currentX = odo.getX();
+    double currentY = odo.getY();
+
+    // find the distance between the targets, and currents 
+    double errorX = targetX - currentX;
+    double errorY = targetY - currentY;
+
+    // find the length of the hypotenuse
+    double errorTan = sqrt(pow(errorX, 2) + pow(errorY, 2));
+
+    return errorTan;
+  }
+
+  // function to go to a point using PID
+
+  vex::timer pid_timer2;
+
+  void goToPointPID(double targetX, double targetY, double speed, Odometry& odo){
+    double currentX = odo.getX();
+    double currentY = odo.getY();
+
+    double error = 0;
+    double errorLast;
+    double dt;
+    double lastTime = 0;
+    pid_timer2.reset();
+  
+    while(true){
+      errorLast = error;
+      error = getDistanceError(targetX, targetY, odo);
+      dt = pid_timer2.time() - lastTime;
+      // more to be done
+
+    }
+  }
 
   // simple turn until feature - need to do better in future
   void turnToTheta(double targetTheta, Odometry& odo) {
