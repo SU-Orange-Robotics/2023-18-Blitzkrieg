@@ -118,7 +118,7 @@ public:
     ChassisLR.spin(directionType::fwd,  y - x + theta, velocityUnits::pct);
   }
 
-  double getError(double target, Odometry& odo) {
+  double getAngleError(double target, Odometry& odo) {
     double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
     if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
       currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
@@ -127,21 +127,32 @@ public:
     return error;
   }
 
-  double getError2(double target, Odometry& odo) {
+  double getAngleError2(double target, Odometry& odo) {
     double currAngle = odo.getTheta();
-    int rotations = currAngle > 0 ? floor(currAngle / 2*M_PI) : ceil(currAngle / 2*M_PI);
+    int rotations = floor(currAngle / (2*M_PI));
+    rotations += rotations < 0 ? 1 : 0;
 
-    double trueTarget1 = target + (rotations * 2*M_PI);
-    double trueTarget2 = trueTarget1 > 0 ? trueTarget1 - 2*M_PI : trueTarget1 + 2*M_PI;
+    double trueTarget1 = target + (rotations * (2*M_PI));
+    double error1 = currAngle - trueTarget1;
+
+    double error2;
+    if (abs(error1) > M_PI && error1 != 0) {
+      error2 = error1 + (2*M_PI * error1 > 0 ? -1 : 1); //positive error --> subtract a rotation, negative error --> add a rotation
+    } else {
+      error2 = error1;
+    }
     
-    double error1 = trueTarget1 - currAngle;
-    double error2 = trueTarget2 - currAngle;
+    return error2;
+
+    /*
+    double trueTarget2 = trueTarget1 - 2*M_PI;
+    error2 = currAngle - trueTarget2;
 
     if (abs(error1) > abs(error2)) {
       return error2;
     } else {
       return error1;
-    }
+    }*/
   }
 
   double getTarget(double target, Odometry& odo) {
@@ -150,14 +161,14 @@ public:
       currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
     }
     double error = currHeading - target;*/
-    double error = getError(target, odo);
+    double error = getAngleError(target, odo);
     double targetPos = odo.getTheta() + error;
     return targetPos;
   }
 
-  const double P = 100; //80
-  const double I = 0;
-  const double D = 0.00;
+  const double P = 50;  //50
+  const double I = 0;   //0
+  const double D = 0.1; //0.1
 
   vex::timer pid_timer;
   
@@ -170,7 +181,7 @@ public:
     pid_timer.reset();
     while(true) {
       errorLast = error;
-      error = getError2(targetHeading, odo);
+      error = getAngleError2(targetHeading, odo);
       dt = pid_timer.time() - lastTime;
 
       double P_comp = P * error;

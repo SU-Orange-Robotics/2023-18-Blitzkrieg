@@ -121,11 +121,13 @@ void autonomous(void) {
   // Insert autonomous user code here.
   // ..........................................................................
 
-  mecDrive.driveToLocation(86, 17.39, odo, 50);
-  wait(0.2, sec);
+  //mecDrive.driveToLocation(86, 17.39, odo, 50);
+  //wait(0.2, sec);
+
   //mecDrive.turnToTheta(M_PI, odo); 
   //mecDrive.turnToHeading(-M_PI + 0.001, odo);
-  mecDrive.turnPID(-2*M_PI/3, odo); 
+  
+  mecDrive.turnPID(3*M_PI/2, odo); 
 
 }
 
@@ -250,6 +252,7 @@ int main() {
   // Prevent main from exiting with an infinite loop.
   while (true) {
     odo.updateOdometry();
+    odo.printLocation();
 
     wait(50, msec);
   }
