@@ -26,9 +26,9 @@ private:
   double locationTheta;
 
 // measure the robot to set this
-  const double width = 6.5;   // distance from center of bot -> back tracking wheel
-  const double length = 13.8; // distance between center of left and rigtht wheels
-  const double circ = 4 * M_PI;
+  const double width = 5.0;   //6.5, distance from center of bot -> back tracking wheel
+  const double length = 16.7; //13.8, distance between center of left and rigtht wheels
+  const double circ = 3.8 * M_PI;
 
 
 public:
