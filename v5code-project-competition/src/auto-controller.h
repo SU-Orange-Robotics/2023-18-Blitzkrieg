@@ -8,13 +8,31 @@
 #include "gyro.h"
 #include "shooter.h"
 
+#include "../include/routine.h"
+
 class AutoController {
+
+private:
+  Routine currentRoutine;
+  Routine BlitzSkills;  
 
 public:
 
-  static void executeRoutine(void (*func)()) {
-    func();
+  AutoController() {
+    // initalize routines
+    BlitzSkillsInit();
+
+    // assign current strategy
+    currentRoutine = BlitzSkills;
   }
+
+  void executeRoutine() {
+    currentRoutine.execute();
+  }
+
+  // static void executeRoutine(void (*func)()) {
+  //   func();
+  // }
 
   static void turnByGyro(double degrees) { // positive for clockwise, negative for counter clockwise
 
@@ -122,6 +140,11 @@ public:
     MecanumDrive::moveBack(20);
     wait(0.1, sec);
     MecanumDrive::stop();
+  }
+
+  void BlitzSkillsInit() {
+    BlitzSkills.addInstruction(std::make_shared<MoveForward>(10.0, 10.0));
+    BlitzSkills.addInstruction(std::make_shared<Turn>(19.0, 2));
   }
 
 
