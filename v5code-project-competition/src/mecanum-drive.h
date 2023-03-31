@@ -6,10 +6,6 @@
 #include <cmath>
 #include <iostream>
 
-double calculateDistance(double x1, double x2, double y1, double y2) {
-  return pow(abs(x1 - x2), 2) + pow(abs(y1 - y2), 2);
-}
-
 class MecanumDrive {
   
 public:
@@ -166,9 +162,9 @@ public:
     return targetPos;
   }
 
-  const double P = 50;  //50
-  const double I = 0;   //0
-  const double D = 0.1; //0.1
+  const double a_P = 50;  //50
+  const double a_I = 0;   //0
+  const double a_D = 0.1; //0.1
 
   vex::timer pid_timer;
   
@@ -184,15 +180,15 @@ public:
       error = getAngleError2(targetHeading, odo);
       dt = pid_timer.time() - lastTime;
 
-      double P_comp = P * error;
+      double P_comp = a_P * error;
       double D_comp = 0;
 
       if (errorLast != 0) {
-        double D_comp = D * (error - errorLast) / dt;
+        double D_comp = a_D * (error - errorLast) / dt;
       }
 
       integrationStored += (error * dt);
-      double I_comp = I * integrationStored;
+      double I_comp = a_I * integrationStored;
 
       double output = P_comp + I_comp + D_comp;
 
@@ -218,7 +214,7 @@ public:
   // simply drive to a certain location by diriving forward, only temporary solution
   // basic function to drive to location, assume already facing the location
 
-  void driveToLocation(double x, double y, Odometry& odo, double speed) {
+  void driveToLocation(double x, double y, Odometry& odo, double speed) { //OUTDATED
     // stage 1: turn to that location
     turnTowardsLocation(x, y, odo);
 
@@ -242,6 +238,86 @@ public:
 
     // loop breaks and motors stop
     stop();
+  }
+
+  double getAngleToPoint(double x2, double y2, Odometry& odo) {
+    double x1 = odo.getX();
+    double y1 = odo.getY();
+
+    double theta = atan2(y2 - y1, x2 - x1);
+
+    return theta;
+  }
+  
+  // find error between target point, and current point
+  double getDistanceError(double targetX, double targetY, Odometry& odo){
+
+    // get current x, and y position
+    double currentX = odo.getX();
+    double currentY = odo.getY();
+
+    // find the distance between the targets, and currents 
+    double errorX = targetX - currentX;
+    double errorY = targetY - currentY;
+
+    // find the length of the hypotenuse
+    double errorTan = sqrt(pow(errorX, 2) + pow(errorY, 2));
+
+    // accounts for the angle always being positive by making it negative if the robot is facing away from the target point
+    errorTan *= abs(getAngleToPoint(targetX, targetY, odo) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
+
+    return errorTan;
+  }
+
+  // function to go to a point using PID
+
+  const double d_P = 1.0;
+  const double d_D = 0.0;
+  const double d_I = 0.0;
+
+  vex::timer pid_timer2;
+
+  void goToPointPID(double targetX, double targetY, Odometry& odo){
+    double currentX = odo.getX();
+    double currentY = odo.getY();
+
+    double error = 0;
+    double errorLast;
+    double dt;
+    double lastTime = 0;
+    double integrationStored = 0;
+    pid_timer2.reset();
+  
+    while(true){
+      errorLast = error;
+      error = getDistanceError(targetX, targetY, odo);
+      dt = pid_timer2.time() - lastTime;
+      
+      double P_comp = d_P * error;
+      double D_comp = 0;
+
+      if (errorLast != 0) {
+        double D_comp = d_D * (error - errorLast) / dt;
+      }
+
+      integrationStored += (error * dt);
+      double I_comp = d_I * integrationStored;
+
+      double output = P_comp + I_comp + D_comp;
+
+      moveFront(output);
+
+      if (abs(error) < 0.02 && abs(error-errorLast) / dt) {
+        break;
+      }
+    }
+    stop();
+  }
+
+  void turnAndDrivePID(double targetX, double targetY, Odometry& odo) {
+    double theta = getAngleToPoint(targetX, targetY, odo);
+    turnPID(theta, odo);
+    goToPointPID(targetX, targetY, odo);
   }
 
   // simple turn until feature - need to do better in future
