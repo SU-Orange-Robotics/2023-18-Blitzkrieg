@@ -1,4 +1,4 @@
-//#include "../src/odometry.h"
+#include "odometry.h"
 
 using namespace vex;
 
@@ -21,7 +21,7 @@ extern inertial Inertial16;
 
 // custom stuff
 extern vex::timer angleAjustTimer;
-//extern Odometry odo;
+extern Odometry odoModule;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
