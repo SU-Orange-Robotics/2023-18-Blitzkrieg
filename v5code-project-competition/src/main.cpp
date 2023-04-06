@@ -59,12 +59,12 @@
 
 #include "vex.h"
 #include "robot-config.h"
-
-#include "mecanum-drive.h"
 #include "trigger.h"
 #include "shooter.h"
 #include "odometry.h"
 #include "auto-controller.h"
+
+#include "./mecanum-drive.h"
 
 #include <cmath>
 
@@ -73,7 +73,6 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 MecanumDrive mecDrive;
-Odometry odo; // not correct, need to add to robot-config later
 
 // define your global instances of motors and other devices here
 
@@ -86,8 +85,6 @@ Odometry odo; // not correct, need to add to robot-config later
 /*  function is only called once after the V5 has been powered on and        */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-
-
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -112,8 +109,6 @@ void pre_auton(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
-
 
 void autonomous(void) { 
 

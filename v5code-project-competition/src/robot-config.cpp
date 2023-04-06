@@ -1,5 +1,5 @@
 #include "vex.h"
-#include "odometry.h"
+#include "robot-config.h"
 
 using namespace vex;
 using signature = vision::signature;
@@ -25,7 +25,7 @@ inertial Inertial16 = inertial(PORT16);
 
 // custom made variables/objects
 vex::timer angleAjustTimer;
-Odometry odoModule;
+Odometry odo;
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

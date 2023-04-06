@@ -1,18 +1,11 @@
-#ifndef ODOMETRY_H
-#define ODOMETRY_H
+#pragma once
 
 #include <vector>
 #include <string>
-// #include <string.h>
 #include <math.h>
 
-// #include "vex.h"
-
 using namespace vex;
-
 using namespace std;
-
-
 
 class Odometry {
 
@@ -47,5 +40,3 @@ public:
 
   void updateOdometry();
 };
-
-#endif
