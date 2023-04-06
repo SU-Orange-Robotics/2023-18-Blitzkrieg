@@ -59,12 +59,12 @@
 
 #include "vex.h"
 #include "robot-config.h"
-
-#include "mecanum-drive.h"
 #include "trigger.h"
 #include "shooter.h"
 #include "odometry.h"
 #include "auto-controller.h"
+
+#include "./mecanum-drive.h"
 
 #include <cmath>
 
@@ -72,7 +72,7 @@ using namespace vex;
 
 // A global instance of competition
 competition Competition;
-Odometry odo; // not correct, need to add to robot-config later
+MecanumDrive mecDrive;
 
 // define your global instances of motors and other devices here
 
@@ -85,8 +85,6 @@ Odometry odo; // not correct, need to add to robot-config later
 /*  function is only called once after the V5 has been powered on and        */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-
-
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -112,15 +110,21 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+void autonomous(void) { 
 
-void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
 
-  MecanumDrive::driveToLocation(86, 17.39, odo, 50);
-  wait(0.2, sec);
-  MecanumDrive::turnToTheta(M_PI, odo); 
+  //mecDrive.driveToLocation(86, 17.39, odo, 50);
+  //wait(0.2, sec);
+
+  //mecDrive.turnToTheta(M_PI, odo); 
+  //mecDrive.turnToHeading(-M_PI + 0.001, odo);
+  
+  //mecDrive.turnPID(3*M_PI/2, odo);
+  
+  mecDrive.turnAndDrivePID(90, 10, odo);
 }
 
 
@@ -155,7 +159,7 @@ void usercontrol(void) {
   //   Shooter::spinShooterForward(50);
   // });
 
-  Controller1.ButtonA.pressed([](){
+  Controller1.ButtonA.pressed([](){ 
     Trigger::launch();
   });
 
@@ -244,6 +248,7 @@ int main() {
   // Prevent main from exiting with an infinite loop.
   while (true) {
     odo.updateOdometry();
+    odo.printLocation();
 
     wait(50, msec);
   }
