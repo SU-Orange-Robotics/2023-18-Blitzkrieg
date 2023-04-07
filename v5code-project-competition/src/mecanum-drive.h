@@ -5,6 +5,10 @@
 #include <cmath>
 #include <iostream>
 
+#include "odometry.h"
+#include "shooter.h"
+#include "trigger.h"
+
 class MecanumDrive {
   
 public:
@@ -112,17 +116,17 @@ public:
     ChassisRF.spin(directionType::fwd, -y + x + theta, velocityUnits::pct);
     ChassisLR.spin(directionType::fwd,  y - x + theta, velocityUnits::pct);
   }
-
-  double getAngleError(double target, Odometry& odo) {
+  /*
+  double getAngleErrorOLD(double target) {
     double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
     if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
       currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
     }
     double error = currHeading - target;
     return error;
-  }
+  }*/
 
-  double getAngleError2(double target, Odometry& odo) {
+  double getAngleError(double target) {
     double currAngle = odo.getTheta();
     int rotations = floor(currAngle / (2*M_PI));
     rotations += rotations < 0 ? 1 : 0;
@@ -138,28 +142,18 @@ public:
     }
     
     return error2;
-
-    /*
-    double trueTarget2 = trueTarget1 - 2*M_PI;
-    error2 = currAngle - trueTarget2;
-
-    if (abs(error1) > abs(error2)) {
-      return error2;
-    } else {
-      return error1;
-    }*/
   }
-
-  double getTarget(double target, Odometry& odo) {
-    /*double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
-    if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
-      currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
-    }
-    double error = currHeading - target;*/
-    double error = getAngleError(target, odo);
+  /*
+  double getTarget(double target) {
+    //double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
+    //if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
+    //  currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
+    //}
+    //double error = currHeading - target;
+    double error = getAngleError(target);
     double targetPos = odo.getTheta() + error;
     return targetPos;
-  }
+  }*/
 
   const double a_P = 50;  //50
   const double a_I = 0;   //0
@@ -167,7 +161,7 @@ public:
 
   vex::timer pid_timer;
   
-  void turnPID(double targetHeading, Odometry& odo) {
+  void turnPID(double targetHeading) {
     double error = 0;
     double errorLast;
     double lastTime = 0;
@@ -176,7 +170,7 @@ public:
     pid_timer.reset();
     while(true) {
       errorLast = error;
-      error = getAngleError2(targetHeading, odo);
+      error = getAngleError(targetHeading);
       dt = pid_timer.time() - lastTime;
 
       double P_comp = a_P * error;
@@ -199,23 +193,23 @@ public:
     }
     stop();
   }
-
-  void turnToHeading(double targetHeading, Odometry& odo) {
-    double targetAngle = getTarget(targetHeading, odo);
+  /*
+  void turnToHeading(double targetHeading) {
+    double targetAngle = getTarget(targetHeading);
     while (odo.getTheta() < (targetAngle - 0.05) || odo.getTheta() > (targetAngle + 0.05)) {
       //drivePure(0, 0, (targetAngle > odo.getTheta()) ? 20 : -20);
       adjustRight(targetAngle > odo.getTheta() ? 20 : -20);
-      //targetAngle = getTarget(targetHeading, odo);
+      //targetAngle = getTarget(targetHeading);
     }
     stop();
-  }
+  }*/
 
   // simply drive to a certain location by diriving forward, only temporary solution
   // basic function to drive to location, assume already facing the location
-
-  void driveToLocation(double x, double y, Odometry& odo, double speed) { //OUTDATED
+  /*
+  void driveToLocation(double x, double y, double speed) { //OUTDATED
     // stage 1: turn to that location
-    turnTowardsLocation(x, y, odo);
+    turnToPoint(x, y);
 
     // stage 2: drive forward
     while(true){
@@ -237,9 +231,9 @@ public:
 
     // loop breaks and motors stop
     stop();
-  }
+  }*/
 
-  double getAngleToPoint(double x2, double y2, Odometry& odo) {
+  double getAngleToPoint(double x2, double y2) {
     double x1 = odo.getX();
     double y1 = odo.getY();
 
@@ -249,7 +243,7 @@ public:
   }
   
   // find error between target point, and current point
-  double getDistanceError(double targetX, double targetY, Odometry& odo){
+  double getDistanceError(double targetX, double targetY){
 
     // get current x, and y position
     double currentX = odo.getX();
@@ -263,22 +257,24 @@ public:
     double errorTan = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
     // accounts for the angle always being positive by making it negative if the robot is facing away from the target point
-    double angleDifference = abs(getAngleToPoint(targetX, targetY, odo) - abs(fmod(odo.getTheta(), 2*M_PI)));
-    errorTan *= (angleDifference < 2*M_PI || angleDifference > 2*M_PI/3) ? 1 : -1;
-    //errorTan *= abs(getAngleToPoint(targetX, targetY, odo) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
+    double currAngle = fmod(odo.getTheta(), 2*M_PI);
+    currAngle += currAngle < 0 ? 2*M_PI : 0;
+    double angleDifference = abs(getAngleToPoint(targetX, targetY) - currAngle);
+    errorTan *= (angleDifference < M_PI/2 || angleDifference > 3*M_PI/2) ? 1 : -1;
+    //errorTan *= abs(getAngleToPoint(targetX, targetY) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
 
     return errorTan;
   }
 
   // function to go to a point using PID
 
-  const double d_P = 1.0;
+  const double d_P = 2.0;
   const double d_D = 0.0;
-  const double d_I = 0.0;
+  const double d_I = 0.00;
 
   vex::timer pid_timer2;
 
-  void goToPointPID(double targetX, double targetY, Odometry& odo){
+  void goToPointPID(double targetX, double targetY){
     double currentX = odo.getX();
     double currentY = odo.getY();
 
@@ -291,7 +287,7 @@ public:
   
     while(true){
       errorLast = error;
-      error = getDistanceError(targetX, targetY, odo);
+      error = getDistanceError(targetX, targetY);
       dt = pid_timer2.time() - lastTime;
       
       double P_comp = d_P * error;
@@ -315,50 +311,47 @@ public:
     stop();
   }
 
-  void turnAndDrivePID(double targetX, double targetY, Odometry& odo) {
-    double theta = getAngleToPoint(targetX, targetY, odo);
-    turnPID(theta, odo);
-    goToPointPID(targetX, targetY, odo);
+  void turnToPoint(double targetX, double targetY, bool flipped = false) {
+    double theta = getAngleToPoint(targetX, targetY);
+    theta += flipped ? -1*M_PI/2 : 0; 
+    turnPID(theta);
+  }
+
+  void turnAndDrivePID(double targetX, double targetY) {
+    turnToPoint(targetX, targetY);
+    goToPointPID(targetX, targetY);
   }
 
   // simple turn until feature - need to do better in future
-  void turnToTheta(double targetTheta, Odometry& odo) {
+  /*void turnToTheta(double targetTheta) {
     while (odo.getTheta() < (targetTheta - 0.05) || odo.getTheta() > (targetTheta + 0.05) ) {
       adjustLeft(20); 
     }
 
     stop();
-  }
-
-
-  void turnTowardsLocation(double x, double y, Odometry& odo) {
-    
-  }
-
-  void shootToNearGoal(Odometry& odo) {
-
-    double botX = odo.getX();
-    double botY = odo.getY();
-    double goalX = 0;
-    double goalY = 0;
-
-    double goalHeading = tan((botY - goalY) / (botX - goalX));
-
-    goalHeading = goalHeading < 0 ? goalHeading += 2*3.14159 : goalHeading;
-
-    turnPID(goalHeading, odo);
-  }
-  /*
-  static void shootToFarGoal(Odometry& odo) {
-    double botX = odo.getX();
-    double botY = odo.gety();
-    double goalX = 0;
-    double goalY = 0;
-
-    double goalHeading = tan((botY - goalY) / (botX - goalX));
-
-    turnToHeading(goalHeading - 3.14159/30, goalHeading + 3.14159/30, false, odo);
   }*/
+
+  void shootToNearGoal(int disks = 1) { //can specifiy number of disks to fire, but fires 1 by default
+    turnToPoint(17.78, 17.78, true);
+
+    Shooter::spinShooterForward(78);
+    for (int i = 0; i < disks; i++) {
+      Trigger::launch();
+      wait(1000, msec);
+    }
+    Shooter::stopShooter();
+  }
+  
+  void shootToFarGoal(int disks = 1) { //can specifiy number of disks to fire, but fires 1 by default
+    turnToPoint(122.63, 122.63, true);
+
+    Shooter::spinShooterForward(78);
+    for (int i = 0; i < disks; i++) {
+      Trigger::launch();
+      wait(1000, msec);
+    }
+    Shooter::stopShooter();
+  }
 
   static void stop() {
     ChassisLF.stop();
