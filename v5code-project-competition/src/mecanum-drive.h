@@ -263,7 +263,9 @@ public:
     double errorTan = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
     // accounts for the angle always being positive by making it negative if the robot is facing away from the target point
-    errorTan *= abs(getAngleToPoint(targetX, targetY, odo) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
+    double angleDifference = abs(getAngleToPoint(targetX, targetY, odo) - abs(fmod(odo.getTheta(), 2*M_PI)));
+    errorTan *= (angleDifference < 2*M_PI || angleDifference > 2*M_PI/3) ? 1 : -1;
+    //errorTan *= abs(getAngleToPoint(targetX, targetY, odo) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
 
     return errorTan;
   }
