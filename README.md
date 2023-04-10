@@ -7,7 +7,7 @@
 ## Collaboration Guidelines
 
 ### Branching
-- use "firstname/branch-feature" format for branch names.
+- use `firstname/branch-feature` format for branch names.
 - always create new branches when working on a new feature, even for the smallest features.
 
 ### Commits
