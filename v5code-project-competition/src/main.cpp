@@ -116,15 +116,18 @@ void autonomous(void) {
   // Insert autonomous user code here.
   // ..........................................................................
 
-  //mecDrive.driveToLocation(86, 17.39, odo, 50);
+  //mecDrive.driveToLocation(86, 17.39, 50);
   //wait(0.2, sec);
 
-  //mecDrive.turnToTheta(M_PI, odo); 
-  //mecDrive.turnToHeading(-M_PI + 0.001, odo);
+  //mecDrive.turnToTheta(M_PI); 
+  //mecDrive.turnToHeading(-M_PI + 0.001);
   
-  mecDrive.turnPID(-2*M_PI/1, odo); 
+  //mecDrive.turnPID(-2*M_PI/1); 
   
-  //mecDrive.turnAndDrivePID(90, 10, odo);
+  //mecDrive.turnAndDrivePID(10, 90);
+
+  //mecDrive.goToPointPID(86, 20);
+  mecDrive.shootToFarGoal();
 }
 
 
