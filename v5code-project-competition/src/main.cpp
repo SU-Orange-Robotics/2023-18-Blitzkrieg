@@ -73,6 +73,7 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 MecanumDrive mecDrive;
+AutoController autoController;
 
 // define your global instances of motors and other devices here
 
@@ -98,6 +99,8 @@ void pre_auton(void) {
 
   Inertial16.calibrate();
   odo.reset();
+
+  autoController.init("BlitzSkills");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -128,6 +131,9 @@ void autonomous(void) {
 
   //mecDrive.goToPointPID(86, 20);
   mecDrive.shootToFarGoal();
+
+  // Sample Usage of AutoController
+  // autoController.executeRoutine();
 }
 
 

@@ -28,7 +28,7 @@ private:
 
 public:
   AutoController() {}
-  AutoController(std::string routineName) {
+  void init(std::string routineName) {
     routineLoaded = false;
 
     // CONTRIBUTE: add new routines here, add your routintInit function with specific instructions added inside it.
