@@ -8,145 +8,44 @@
 #include "gyro.h"
 #include "shooter.h"
 
-#include "../include/routine.h"
+#include "routine.h"
+
+#include <string>
+
+// routines
+#include "./routines/BlitzSkills.h"
+
+// HOW TO USE:
+// 1. Add your routine as a new member variable
+// 2. Add your "routineInit" function
+// 3. Add your to the constructor
 
 class AutoController {
 
 private:
-  Routine currentRoutine;
-  Routine BlitzSkills;  
+  Routine currentRoutine; 
+  bool routineLoaded;
 
 public:
+  AutoController() {}
+  AutoController(std::string routineName) {
+    routineLoaded = false;
 
-  AutoController() {
-    // initalize routines
-    BlitzSkillsInit();
+    // CONTRIBUTE: add new routines here, add your routintInit function with specific instructions added inside it.
+    if (routineName == "BlitzSkills") {
+      // initalize routines (add instructions)
+      BlitzSkillsInit(currentRoutine, routineName);
+    }
 
-    // assign current strategy
-    currentRoutine = BlitzSkills;
+    routineLoaded = true;
   }
 
   void executeRoutine() {
+    while (!routineLoaded) {
+      vex::task::sleep(100);
+    }
     currentRoutine.execute();
   }
-
-  // static void executeRoutine(void (*func)()) {
-  //   func();
-  // }
-
-  static void turnByGyro(double degrees) { // positive for clockwise, negative for counter clockwise
-
-  }
-
-// routines
-  static void twoHighAuto() {
-    // plan b for turning red
-    MecanumDrive::moveBack(20);
-    wait(1, sec);
-    MecanumDrive::stop();
-
-
-    MecanumDrive::adjustLeft(20);
-    wait(0.9, sec);
-    MecanumDrive::stop();
-
-    wait(0.2, sec);
-
-    // shoot two discs
-    Shooter::spinShooterForward(88);
-    wait(10, sec);
-    Trigger::launch();
-    wait(3, sec);
-    Trigger::launch();
-    wait(0.5, sec);
-    Shooter::stopShooter();
-
-    MecanumDrive::adjustRight(20);
-    wait(0.8,sec);
-    MecanumDrive::stop();
-
-    // move right
-    MecanumDrive::moveRight(20);
-    wait(4.9, sec);
-    MecanumDrive::stop();
-
-
-    // run back slowly
-    MecanumDrive::moveFront(20);
-    wait(1.1, sec);
-    MecanumDrive::stop();
-    
-    // roller
-    IntakeMotor.spin(vex::reverse, 100, percent);
-    wait(1.0, sec);
-    IntakeMotor.stop();
-  }
-
-  
-  static void threeLowAuto() {
-     MecanumDrive::moveBack(20);
-    wait(0.53, sec);
-    MecanumDrive::stop();
-
-    MecanumDrive::adjustRight(20);
-    wait(2.57, sec);
-    MecanumDrive::stop();
-
-    Shooter::setShooterVelocityPct(80);
-    Shooter::spinShooterForward(80);
-    wait(10, sec);
-    Trigger::launch();
-    wait(4, sec);
-    Trigger::launch();
-    wait(1, sec);
-    Trigger::launch();
-    wait(1, sec);
-    Trigger::launch();
-    wait(1, sec);
-    Trigger::launch();
-    wait(1, sec);
-    Trigger::launch();
-    wait(0.5, sec);
-    Shooter::stopShooter();
-
-    MecanumDrive::adjustLeft(20);
-    wait(2.57, sec);
-    MecanumDrive::stop();
-
-    MecanumDrive::moveRight(20);
-    wait(3.6, sec);
-    MecanumDrive::stop();
-
-    // run back slowly
-    MecanumDrive::moveFront(20);
-    wait(0.2, sec);
-    MecanumDrive::stop();
-
-    MecanumDrive::moveRight(20);
-    wait(.50, sec);
-    MecanumDrive::stop();
-
-    // run back slowly
-    MecanumDrive::moveFront(20);
-    wait(0.3, sec);
-
-    
-    // roller
-    IntakeMotor.spin(vex::reverse, 100, percent);
-    wait(1.50, sec);
-    IntakeMotor.stop();
-    MecanumDrive::stop();
-
-    MecanumDrive::moveBack(20);
-    wait(0.1, sec);
-    MecanumDrive::stop();
-  }
-
-  void BlitzSkillsInit() {
-    BlitzSkills.addInstruction(std::make_shared<MoveForward>(10.0, 10.0));
-    BlitzSkills.addInstruction(std::make_shared<Turn>(19.0, 2));
-  }
-
 
   // start on left of closer goal, two high goal, two roller
   void skilledAuto() {
