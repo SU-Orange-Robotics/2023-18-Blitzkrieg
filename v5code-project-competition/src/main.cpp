@@ -59,12 +59,12 @@
 
 #include "vex.h"
 #include "robot-config.h"
-
-#include "mecanum-drive.h"
 #include "trigger.h"
 #include "shooter.h"
 #include "odometry.h"
 #include "auto-controller.h"
+
+#include "./mecanum-drive.h"
 
 #include <cmath>
 
@@ -73,7 +73,7 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 MecanumDrive mecDrive;
-Odometry odo; // not correct, need to add to robot-config later
+AutoController autoController;
 
 // define your global instances of motors and other devices here
 
@@ -87,8 +87,6 @@ Odometry odo; // not correct, need to add to robot-config later
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
-
-
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -101,6 +99,8 @@ void pre_auton(void) {
 
   Inertial16.calibrate();
   odo.reset();
+
+  autoController.init("BlitzSkills");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -113,20 +113,27 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-
-
 void autonomous(void) { 
 
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
 
-  mecDrive.driveToLocation(86, 17.39, odo, 50);
-  wait(0.2, sec);
-  //mecDrive.turnToTheta(M_PI, odo); 
-  //mecDrive.turnToHeading(-M_PI + 0.001, odo);
-  mecDrive.turnPID(-2*M_PI/3, odo); 
+  //mecDrive.driveToLocation(86, 17.39, 50);
+  //wait(0.2, sec);
 
+  //mecDrive.turnToTheta(M_PI); 
+  //mecDrive.turnToHeading(-M_PI + 0.001);
+  
+  //mecDrive.turnPID(-2*M_PI/1); 
+  
+  //mecDrive.turnAndDrivePID(10, 90);
+
+  //mecDrive.goToPointPID(86, 20);
+  mecDrive.shootToFarGoal();
+
+  // Sample Usage of AutoController
+  // autoController.executeRoutine();
 }
 
 
@@ -250,6 +257,7 @@ int main() {
   // Prevent main from exiting with an infinite loop.
   while (true) {
     odo.updateOdometry();
+    odo.printLocation();
 
     wait(50, msec);
   }
