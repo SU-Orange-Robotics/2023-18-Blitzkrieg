@@ -256,6 +256,10 @@ public:
     // find the length of the hypotenuse
     double errorTan = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
+        if(count % 100 == 0){
+      cout << "first: " << errorTan << endl;
+    }
+
     // accounts for the angle always being positive by making it negative if the robot is facing away from the target point
     double currAngle = fmod(odo.getTheta(), 2*M_PI);
     currAngle += currAngle < 0 ? 2*M_PI : 0;
@@ -263,7 +267,12 @@ public:
     errorTan *= (angleDifference < M_PI/2 || angleDifference > 3*M_PI/2) ? 1 : -1;
     //errorTan *= abs(getAngleToPoint(targetX, targetY) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
 
-    return errorTan;
+
+    if(count % 100 == 0){
+        cout << "second: " << errorTan << endl;
+      }
+
+      return errorTan;
   }
 
   // function to go to a point using PID
@@ -284,10 +293,10 @@ public:
     double lastTime = 0;
     double integrationStored = 0;
     pid_timer2.reset();
-  
+    int count = 0;
     while(true){
       errorLast = error;
-      error = getDistanceError(targetX, targetY);
+      error = getDistanceError(targetX, targetY, count++);
       dt = pid_timer2.time() - lastTime;
       
       double P_comp = d_P * error;
@@ -313,14 +322,13 @@ public:
 
   void turnToPoint(double targetX, double targetY, bool flipped = false) {
     double theta = getAngleToPoint(targetX, targetY);
-    theta += flipped ? -1*M_PI/2 : 0; 
+    theta += flipped ? -1*M_PI : 0; 
     turnPID(theta);
   }
 
   void turnAndDrivePID(double targetX, double targetY) {
     turnToPoint(targetX, targetY);
     goToPointPID(targetX, targetY);
-  }
 
   // simple turn until feature - need to do better in future
   /*void turnToTheta(double targetTheta) {
