@@ -127,6 +127,18 @@ void autonomous(void) {
   //mecDrive.turnToHeading(-M_PI + 0.001, odo);
   mecDrive.turnPID(-2*M_PI/3, odo); 
 
+  //mecDrive.turnToTheta(M_PI); 
+  //mecDrive.turnToHeading(-M_PI + 0.001);
+  
+  //mecDrive.turnPID(-2*M_PI/1); 
+  
+  //mecDrive.turnAndDrivePID(10, 90);
+
+  mecDrive.goToPointPID(86, 20);
+  mecDrive.shootToFarGoal();
+
+  // Sample Usage of AutoController
+  // autoController.executeRoutine();
 }
 
 

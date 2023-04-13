@@ -217,7 +217,7 @@ public:
   }
   
   // find error between target point, and current point
-  double getDistanceError(double targetX, double targetY, Odometry& odo){
+  double getDistanceError(double targetX, double targetY, int count){
 
     // get current x, and y position
     double currentX = odo.getX();
@@ -228,12 +228,36 @@ public:
     double errorY = targetY - currentY;
 
     // find the length of the hypotenuse
+
+
     double errorTan = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
-    return errorTan;
-  }
+    if(count % 100 == 0){
+      cout << "first: " << errorTan << endl;
+    }
+
+    // accounts for the angle always being positive by making it negative if the robot is facing away from the target point
+    double currAngle = fmod(odo.getTheta(), 2*M_PI);
+    currAngle += currAngle < 0 ? 2*M_PI : 0;
+    double angleDifference = abs(getAngleToPoint(targetX, targetY) - currAngle);
+    errorTan *= (angleDifference < M_PI/2 || angleDifference > 3*M_PI/2) ? 1 : -1;
+    //errorTan *= abs(getAngleToPoint(targetX, targetY) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
+
+
+    if(count % 100 == 0){
+        cout << "second: " << errorTan << endl;
+      }
+
+      return errorTan;
+
+    }
+
 
   // function to go to a point using PID
+
+  const double d_P = 3.0;
+  const double d_D = 2.0;
+  const double d_I = 0.00;
 
   vex::timer pid_timer2;
 
@@ -246,14 +270,42 @@ public:
     double dt;
     double lastTime = 0;
     pid_timer2.reset();
-  
+    int count = 0;
     while(true){
       errorLast = error;
-      error = getDistanceError(targetX, targetY, odo);
+      error = getDistanceError(targetX, targetY, count++);
       dt = pid_timer2.time() - lastTime;
       // more to be done
 
+      if (errorLast != 0) {
+        double D_comp = d_D * (error - errorLast) / dt;
+      }
+
+      integrationStored += (error * dt);
+      double I_comp = d_I * integrationStored;
+
+      double output = P_comp + I_comp + D_comp;
+
+      moveFront(output);
+
+      if (abs(error) < 0.2
+       // && abs(error-errorLast) / dt
+      ) {
+        break;
+      }
     }
+    stop();
+  }
+
+  void turnToPoint(double targetX, double targetY, bool flipped = false) {
+    double theta = getAngleToPoint(targetX, targetY);
+    theta += flipped ? -1*M_PI : 0; 
+    turnPID(theta);
+  }
+
+  void turnAndDrivePID(double targetX, double targetY) {
+    turnToPoint(targetX, targetY);
+    goToPointPID(targetX, targetY);
   }
 
   // simple turn until feature - need to do better in future
