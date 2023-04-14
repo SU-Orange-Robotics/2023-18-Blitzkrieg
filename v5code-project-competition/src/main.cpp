@@ -129,7 +129,7 @@ void autonomous(void) {
   
   //mecDrive.turnAndDrivePID(10, 90);
 
-  //mecDrive.goToPointPID(86, 20);
+  mecDrive.goToPointPID(86, 20);
   mecDrive.shootToFarGoal();
 
   // Sample Usage of AutoController
