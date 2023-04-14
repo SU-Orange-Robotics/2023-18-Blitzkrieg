@@ -175,7 +175,7 @@ void usercontrol(void) {
     angleAjustTimer.reset();
   });
 
-  double turnImportance = 0.5;
+  // double turnImportance = 0.5;
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
@@ -211,6 +211,15 @@ void usercontrol(void) {
 //
 // Main will set up the competition functions and callbacks.
 //
+
+void printProcess() {
+  while(true) {
+    if (DEBUG_MODE) odo.printLocation();
+
+    wait(500, msec);
+  }
+}
+
 int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
@@ -219,11 +228,12 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
+  // Separate thread for slower print updates for better performance.
+  vex::thread printThread(printProcess);
+
   // Main process will be doing updates to the odometry regularly (roughly 100Hz)
   while (true) {
     odo.updateOdometry();
-    if (DEBUG_MODE) odo.printLocation();
-
     wait(10, msec);
   }
 }
