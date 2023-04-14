@@ -1,42 +1,8 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// ChassisLR            motor         11              
-// ChassisLF            motor         13              
-// ChassisRF            motor         14              
-// ChassisRR            motor         12              
-// Left                 rotation      1               
-// Right                rotation      20              
-// Center               rotation      3               
-// IntakeMotor          motor         10              
-// TriggerMotor         motor         8               
-// ShooterMotorA        motor         2               
-// ShooterMotorB        motor         17              
-// Inertial16           inertial      16              
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// ChassisLR            motor         11              
-// ChassisLF            motor         13              
-// ChassisRF            motor         14              
-// ChassisRR            motor         12              
-// Left                 rotation      1               
-// Right                rotation      20              
-// Center               rotation      3               
-// IntakeMotor          motor         10              
-// TriggerMotor         motor         8               
-// ShooterMotorA        motor         2               
-// ShooterMotorB        motor         17              
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
 /*    Author:       VEX                                                       */
-/*    Created:      Thu Sep 26 2019                                           */
+/*    Created:      FEB 10 2023                                               */
 /*    Description:  Clawbot Competition Template                              */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
@@ -65,6 +31,7 @@
 #include "auto-controller.h"
 
 #include "./mecanum-drive.h"
+#include "./constants.h"
 
 #include <cmath>
 
@@ -235,8 +202,6 @@ void usercontrol(void) {
       }
     }
 
-    odo.printLocation();
-
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
 
@@ -254,11 +219,11 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
-  // Prevent main from exiting with an infinite loop.
+  // Main process will be doing updates to the odometry regularly (roughly 100Hz)
   while (true) {
     odo.updateOdometry();
-    odo.printLocation();
+    if (DEBUG_MODE) odo.printLocation();
 
-    wait(50, msec);
+    wait(10, msec);
   }
 }
