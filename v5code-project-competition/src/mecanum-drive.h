@@ -204,35 +204,6 @@ public:
     stop();
   }*/
 
-  // simply drive to a certain location by diriving forward, only temporary solution
-  // basic function to drive to location, assume already facing the location
-  /*
-  void driveToLocation(double x, double y, double speed) { //OUTDATED
-    // stage 1: turn to that location
-    turnToPoint(x, y);
-
-    // stage 2: drive forward
-    while(true){
-      odo.updateOdometry();
-      odo.printLocation();
-      // gets current location and assigns them
-      double x_new = odo.getX();
-      double y_new = odo.getY();
-      // if the new location - intitial location >= 1 break, then stop
-      if (abs(x_new - x) <= 5 && abs(y_new - y) <= 5){
-        cout << "reaching the point" << endl;
-        break;
-      }
-      // else drive to position
-      else{
-        moveFront(speed);
-      }
-    }
-
-    // loop breaks and motors stop
-    stop();
-  }*/
-
   double getAngleToPoint(double x2, double y2) {
     double x1 = odo.getX();
     double y1 = odo.getY();
