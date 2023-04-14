@@ -39,7 +39,7 @@ vector<double> Odometry::getLocation() {
 }
 
 void Odometry::printLocation() {
-  Brain.Screen.clearScreen();
+  Brain.Screen.clearScreen(); 
   
   Brain.Screen.setCursor(1, 1);
   Brain.Screen.print("X: %f", locationX);
@@ -51,7 +51,6 @@ void Odometry::printLocation() {
   // Display the Z position on row 3
   Brain.Screen.newLine();
   Brain.Screen.print("Theta: %f", locationTheta);
-
 
   Controller1.Screen.setCursor(0,0);
   Controller1.Screen.clearScreen();
