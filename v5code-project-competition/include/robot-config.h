@@ -22,7 +22,7 @@ extern motor ShooterMotorB;
 extern inertial Inertial16;
 
 // custom stuff
-extern vex::timer angleAjustTimer;
+extern vex::timer angleAdjustTimer;
 extern Odometry odo;
 
 /**

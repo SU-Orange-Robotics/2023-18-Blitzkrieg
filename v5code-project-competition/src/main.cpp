@@ -135,18 +135,43 @@ void usercontrol(void) {
   //   Shooter::spinShooterForward(50);
   // });
 
+  /* CONTROLS INFO
+    A : launch disk / move flipper (press)
+    B : unassigned
+    X : unassigned
+    Y : unassigned
+
+    Up:    rotate to face far goal (press)
+    Down:  rotate to face near goal (press)
+    Left:  slow turn left (hold)
+    Right: slow turn right (hold)
+
+    Right Stick X (Axis 1): rotation control
+    Right Stick Y (Axis 2): unassigned
+
+    Left Stick X (Axis 4): left/right translation control
+    Left Stick Y (Axis 3): forward/reverse translation control
+
+    R1 Trigger: spin intake forward (hold)
+    R2 Trigger: spin intake backward (hold)
+
+    L1 Trigger: spin shooter flywheel (hold)
+    L2 Trigger: invert translational joystick control (hold)
+
+  */
+
   Controller1.ButtonA.pressed([](){ 
     Trigger::launch();
   });
 
   Controller1.ButtonLeft.pressed([](){
     MecanumDrive::adjustLeft(18);
-    angleAjustTimer.reset();
+    angleAdjustTimer.reset();
   });
 
   Controller1.ButtonRight.pressed([](){
     MecanumDrive::adjustRight(18);
-    angleAjustTimer.reset();
+    angleAdjustTimer.reset();
   });
 
   Controller1.ButtonR1.pressed([](){
@@ -165,14 +190,12 @@ void usercontrol(void) {
     IntakeMotor.stop();
   });
 
-  Controller1.ButtonLeft.pressed([](){
-    MecanumDrive::adjustLeft(18);
-    angleAjustTimer.reset();
+  Controller1.ButtonUp.pressed([](){
+    mecDrive.turnToFarGoal();
   });
 
-  Controller1.ButtonRight.pressed([](){
-    MecanumDrive::adjustRight(18);
-    angleAjustTimer.reset();
+  Controller1.ButtonDown.pressed([](){
+    mecDrive.turnToNearGoal();
   });
 
   // double turnImportance = 0.5;
@@ -193,11 +216,11 @@ void usercontrol(void) {
  
 
     {
-      if (!Controller1.ButtonLeft.pressing() && !Controller1.ButtonRight.pressing()) {
+      if (!Controller1.ButtonLeft.pressing() && !Controller1.ButtonRight.pressing() && mecDrive.activePID == false) {
         if (!Controller1.ButtonL2.pressing()) {
-          MecanumDrive::drive(Controller1.Axis3.value(), Controller1.Axis4.value(), Controller1.Axis1.value());
+          MecanumDrive::drive(Controller1.Axis3.value(), Controller1.Axis4.value(), Controller1.Axis1.value()); //inverted joystick control
         } else {
-          MecanumDrive::drive(-Controller1.Axis3.value(), -Controller1.Axis4.value(), Controller1.Axis1.value());
+          MecanumDrive::drive(-Controller1.Axis3.value(), -Controller1.Axis4.value(), Controller1.Axis1.value()); //joystick drivetrain control code
         }
       }
     }

@@ -24,7 +24,7 @@ motor ShooterMotorB = motor(PORT10, ratio6_1, true);
 inertial Inertial16 = inertial(PORT16);
 
 // custom made variables/objects
-vex::timer angleAjustTimer;
+vex::timer angleAdjustTimer;
 Odometry odo;
 
 // VEXcode generated functions

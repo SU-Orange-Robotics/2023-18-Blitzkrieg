@@ -155,6 +155,8 @@ public:
     return targetPos;
   }*/
 
+  bool activePID = false;
+
   const double a_P = 50;  //50
   const double a_I = 0;   //0
   const double a_D = 0.1; //0.1
@@ -169,6 +171,7 @@ public:
     double integrationStored = 0;
     pid_timer.reset();
     while(true) {
+      activePID = true;
       errorLast = error;
       error = getAngleError(targetHeading);
       dt = pid_timer.time() - lastTime;
@@ -191,6 +194,7 @@ public:
         break;
       }
     }
+    activePID = false;
     stop();
   }
   /*
@@ -266,6 +270,7 @@ public:
     int count = 0;
   
     while(true){
+      activePID = true;
       errorLast = error;
       error = getDistanceError(targetX, targetY, count++);
       dt = pid_timer2.time() - lastTime;
@@ -288,6 +293,7 @@ public:
         break;
       }
     }
+    activePID = false;
     stop();
   }
 
@@ -331,6 +337,14 @@ public:
       wait(1000, msec);
     }
     Shooter::stopShooter();
+  }
+
+  void turnToNearGoal() {
+    turnToPoint(17.78, 17.78, true);
+  }
+
+  void turnToFarGoal() {
+    turnToPoint(122.63, 122.63);
   }
 
   static void stop() {
