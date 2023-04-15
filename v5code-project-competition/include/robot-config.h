@@ -3,6 +3,7 @@
 #include "odometry.h"
 
 using namespace vex;
+using signature = vision::signature;
 
 extern brain Brain;
 
@@ -20,6 +21,10 @@ extern motor TriggerMotor;
 extern motor ShooterMotorA;
 extern motor ShooterMotorB;
 extern inertial Inertial16;
+extern signature Vision12__SIG_1;
+extern signature Vision12__SIG_2;
+
+extern vision Vision12;
 
 // custom stuff
 extern vex::timer angleAjustTimer;

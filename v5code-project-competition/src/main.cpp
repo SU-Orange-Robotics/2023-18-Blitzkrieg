@@ -96,7 +96,8 @@ void autonomous(void) {
   
   //mecDrive.turnAndDrivePID(10, 90);
 
-  mecDrive.goToPointPID(86, 20);
+
+  mecDrive.goToPointPID(86, 40);
   mecDrive.shootToFarGoal();
 
   // Sample Usage of AutoController
@@ -220,6 +221,26 @@ void printProcess() {
   }
 }
 
+void visionTester(void){
+  cout << "working?" << "\n";
+  while(1){
+  
+  Vision12.takeSnapshot(Vision12__SIG_1, 3); // maybe?
+
+  if(Vision12.objectCount > 0){
+    if(abs(Vision12.objects[0].centerX - 158) < 15) { //&& abs(Vision13.objects[0].centerY - 106) < 30){
+      cout << "cX: " << Vision12.objects[0].centerX << "    cY: " << Vision12.objects[0].centerY << "\n";
+    }
+  } 
+  if(Vision12.objectCount == 0){
+    cout << "No center: " << "\n";
+  }
+  wait(100, msec);
+
+  }
+
+}
+
 int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
@@ -236,4 +257,5 @@ int main() {
     odo.updateOdometry();
     wait(10, msec);
   }
+
 }

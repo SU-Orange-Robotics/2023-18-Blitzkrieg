@@ -227,9 +227,9 @@ public:
     // find the length of the hypotenuse
     double errorTan = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
-    // if(count % 100 == 0){
-    //   cout << "first: " << errorTan << endl;
-    // }
+    if(count % 100 == 0){
+      cout << "first: " << errorTan << endl;
+    }
 
     // accounts for the angle always being positive by making it negative if the robot is facing away from the target point
     double currAngle = fmod(odo.getTheta(), 2*M_PI);
@@ -238,9 +238,10 @@ public:
     errorTan *= (angleDifference < M_PI/2 || angleDifference > 3*M_PI/2) ? 1 : -1;
     //errorTan *= abs(getAngleToPoint(targetX, targetY) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
     
-    // if(count % 100 == 0){
-    //   cout << "second: " << errorTan << endl;
-    // }
+    if(count % 100 == 0){
+      cout << "second: " << errorTan << endl;
+    }
+
     return errorTan;
   }
 
@@ -284,7 +285,7 @@ public:
 
       moveFront(output);
 
-      if (abs(error) < 0.2 && abs(error-errorLast) / dt) {
+      if (abs(error) < 2.0 && abs(error-errorLast) / dt) {
         break;
       }
     }
@@ -327,8 +328,8 @@ public:
 
     Shooter::spinShooterForward(78);
     for (int i = 0; i < disks; i++) {
+      wait(7000, msec);
       Trigger::launch();
-      wait(1000, msec);
     }
     Shooter::stopShooter();
   }
