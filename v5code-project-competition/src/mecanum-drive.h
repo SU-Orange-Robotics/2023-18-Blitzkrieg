@@ -204,35 +204,6 @@ public:
     stop();
   }*/
 
-  // simply drive to a certain location by diriving forward, only temporary solution
-  // basic function to drive to location, assume already facing the location
-  /*
-  void driveToLocation(double x, double y, double speed) { //OUTDATED
-    // stage 1: turn to that location
-    turnToPoint(x, y);
-
-    // stage 2: drive forward
-    while(true){
-      odo.updateOdometry();
-      odo.printLocation();
-      // gets current location and assigns them
-      double x_new = odo.getX();
-      double y_new = odo.getY();
-      // if the new location - intitial location >= 1 break, then stop
-      if (abs(x_new - x) <= 5 && abs(y_new - y) <= 5){
-        cout << "reaching the point" << endl;
-        break;
-      }
-      // else drive to position
-      else{
-        moveFront(speed);
-      }
-    }
-
-    // loop breaks and motors stop
-    stop();
-  }*/
-
   double getAngleToPoint(double x2, double y2) {
     double x1 = odo.getX();
     double y1 = odo.getY();
@@ -243,7 +214,7 @@ public:
   }
   
   // find error between target point, and current point
-  double getDistanceError(double targetX, double targetY){
+  double getDistanceError(double targetX, double targetY, int count){
 
     // get current x, and y position
     double currentX = odo.getX();
@@ -256,25 +227,32 @@ public:
     // find the length of the hypotenuse
     double errorTan = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
+    // if(count % 100 == 0){
+    //   cout << "first: " << errorTan << endl;
+    // }
+
     // accounts for the angle always being positive by making it negative if the robot is facing away from the target point
     double currAngle = fmod(odo.getTheta(), 2*M_PI);
     currAngle += currAngle < 0 ? 2*M_PI : 0;
     double angleDifference = abs(getAngleToPoint(targetX, targetY) - currAngle);
     errorTan *= (angleDifference < M_PI/2 || angleDifference > 3*M_PI/2) ? 1 : -1;
     //errorTan *= abs(getAngleToPoint(targetX, targetY) - fmod(odo.getTheta(), 2*M_PI)) < M_PI/2 ? 1 : -1; // angle from where robot is facing to angle towards desired location
-
+    
+    // if(count % 100 == 0){
+    //   cout << "second: " << errorTan << endl;
+    // }
     return errorTan;
   }
 
   // function to go to a point using PID
 
-  const double d_P = 2.0;
-  const double d_D = 0.0;
+  const double d_P = 3.0;
+  const double d_D = 3.0;
   const double d_I = 0.00;
 
   vex::timer pid_timer2;
 
-  void goToPointPID(double targetX, double targetY){
+  void goToPointPID(double targetX, double targetY ){
     double currentX = odo.getX();
     double currentY = odo.getY();
 
@@ -284,10 +262,12 @@ public:
     double lastTime = 0;
     double integrationStored = 0;
     pid_timer2.reset();
+
+    int count = 0;
   
     while(true){
       errorLast = error;
-      error = getDistanceError(targetX, targetY);
+      error = getDistanceError(targetX, targetY, count++);
       dt = pid_timer2.time() - lastTime;
       
       double P_comp = d_P * error;
@@ -304,7 +284,7 @@ public:
 
       moveFront(output);
 
-      if (abs(error) < 0.02 && abs(error-errorLast) / dt) {
+      if (abs(error) < 0.2 && abs(error-errorLast) / dt) {
         break;
       }
     }
@@ -313,7 +293,7 @@ public:
 
   void turnToPoint(double targetX, double targetY, bool flipped = false) {
     double theta = getAngleToPoint(targetX, targetY);
-    theta += flipped ? -1*M_PI/2 : 0; 
+    theta += flipped ? -1*M_PI : 0; 
     turnPID(theta);
   }
 

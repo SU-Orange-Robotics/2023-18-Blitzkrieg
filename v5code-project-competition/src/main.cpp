@@ -1,42 +1,8 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// ChassisLR            motor         11              
-// ChassisLF            motor         13              
-// ChassisRF            motor         14              
-// ChassisRR            motor         12              
-// Left                 rotation      1               
-// Right                rotation      20              
-// Center               rotation      3               
-// IntakeMotor          motor         10              
-// TriggerMotor         motor         8               
-// ShooterMotorA        motor         2               
-// ShooterMotorB        motor         17              
-// Inertial16           inertial      16              
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// ChassisLR            motor         11              
-// ChassisLF            motor         13              
-// ChassisRF            motor         14              
-// ChassisRR            motor         12              
-// Left                 rotation      1               
-// Right                rotation      20              
-// Center               rotation      3               
-// IntakeMotor          motor         10              
-// TriggerMotor         motor         8               
-// ShooterMotorA        motor         2               
-// ShooterMotorB        motor         17              
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
 /*    Author:       VEX                                                       */
-/*    Created:      Thu Sep 26 2019                                           */
+/*    Created:      FEB 10 2023                                               */
 /*    Description:  Clawbot Competition Template                              */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
@@ -65,6 +31,7 @@
 #include "auto-controller.h"
 
 #include "./mecanum-drive.h"
+#include "./constants.h"
 
 #include <cmath>
 
@@ -73,6 +40,7 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 MecanumDrive mecDrive;
+AutoController autoController;
 
 // define your global instances of motors and other devices here
 
@@ -98,6 +66,8 @@ void pre_auton(void) {
 
   Inertial16.calibrate();
   odo.reset();
+
+  autoController.init("BlitzSkills");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -126,8 +96,11 @@ void autonomous(void) {
   
   //mecDrive.turnAndDrivePID(10, 90);
 
-  //mecDrive.goToPointPID(86, 20);
+  mecDrive.goToPointPID(86, 20);
   mecDrive.shootToFarGoal();
+
+  // Sample Usage of AutoController
+  // autoController.executeRoutine();
 }
 
 
@@ -202,7 +175,7 @@ void usercontrol(void) {
     angleAjustTimer.reset();
   });
 
-  double turnImportance = 0.5;
+  // double turnImportance = 0.5;
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
@@ -229,8 +202,6 @@ void usercontrol(void) {
       }
     }
 
-    odo.printLocation();
-
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
 
@@ -240,6 +211,15 @@ void usercontrol(void) {
 //
 // Main will set up the competition functions and callbacks.
 //
+
+void printProcess() {
+  while(true) {
+    if (DEBUG_MODE) odo.printLocation();
+
+    wait(500, msec);
+  }
+}
+
 int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
@@ -248,11 +228,12 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
-  // Prevent main from exiting with an infinite loop.
+  // Separate thread for slower print updates for better performance.
+  vex::thread printThread(printProcess);
+
+  // Main process will be doing updates to the odometry regularly (roughly 100Hz)
   while (true) {
     odo.updateOdometry();
-    odo.printLocation();
-
-    wait(50, msec);
+    wait(10, msec);
   }
 }

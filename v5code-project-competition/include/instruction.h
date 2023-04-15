@@ -1,11 +1,10 @@
-
-
+#pragma once
 
 class Instruction {
 public:
   virtual ~Instruction() = default;
   virtual void execute() const = 0;
-};
+}; 
 
 class MoveForward : public Instruction {
 public:
