@@ -254,9 +254,9 @@ int main() {
   // Separate thread for slower print updates for better performance.
   vex::thread printThread(printProcess);
 
-  // Main process will be doing updates to the odometry regularly (roughly 100Hz)
+  // Main process will be doing updates to the odometry regularly
   while (true) {
-    odo.updateOdometry();
-    wait(10, msec);
+    odo.updateOdometry(); 
+    wait(40, msec);
   }
 }

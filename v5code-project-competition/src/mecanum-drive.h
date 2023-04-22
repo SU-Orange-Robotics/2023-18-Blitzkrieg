@@ -116,15 +116,39 @@ public:
     ChassisRF.spin(directionType::fwd, -y + x + theta, velocityUnits::pct);
     ChassisLR.spin(directionType::fwd,  y - x + theta, velocityUnits::pct);
   }
-  /*
+  
   double getAngleErrorOLD(double target) {
-    double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
+    double currAngle = odo.getTheta();
+    double currHeading = fmod(currAngle, 2*M_PI); // gets angle and then restricts it to a fixed range
     if (abs(currHeading) > M_PI) { //converts a (0 to 2pi) value to a (-pi to pi) value
-      currHeading -= (2 * M_PI) * (currHeading > 0 ? 1 : -1);
+      currHeading += (2 * M_PI) * (currHeading > 0 ? -1 : 1);
     }
-    double error = currHeading - target;
-    return error;
-  }*/
+    double error = target - currHeading; //ccw positive
+    /*
+    if (abs(error) > M_PI) {
+      double error2 = (target + 2*M_PI) - currHeading;
+      double error3 = (target - 2*M_PI) - currHeading;
+      if (abs(error) > abs(error2)) {
+        error = error2;
+      } else if (abs(error) > abs(error3)) {
+        error = error3;
+      }
+    }*/
+
+    if (error > M_PI) { //chech smaller target
+      double error2 = (target - 2*M_PI) - currHeading;
+      if (abs(error) > abs(error2)) {
+        error = error2;
+      }
+    } else if (error < -1*M_PI) { //check larger target
+      double error2 = (target + 2*M_PI) - currHeading;
+      if (abs(error) > abs(error2)) {
+        error = error2;
+      }
+    }
+    
+    return error * -1; //convert to ccw negative
+  }
 
   double getAngleError(double target) {
     double currAngle = odo.getTheta();
@@ -143,6 +167,7 @@ public:
     
     return error2;
   }
+
   /*
   double getTarget(double target) {
     //double currHeading = fmod(odo.getTheta(), 2 * M_PI); // gets angle and then restricts it to a fixed range
@@ -159,7 +184,7 @@ public:
 
   const double a_P = 50;  //50
   const double a_I = 0;   //0
-  const double a_D = 0.1; //0.1
+  const double a_D = 0.2; //0.1
 
   vex::timer pid_timer;
   
@@ -173,7 +198,7 @@ public:
     while(true) {
       activePID = true;
       errorLast = error;
-      error = getAngleError(targetHeading);
+      error = getAngleErrorOLD(targetHeading);
       dt = pid_timer.time() - lastTime;
 
       double P_comp = a_P * error;
@@ -299,7 +324,10 @@ public:
 
   void turnToPoint(double targetX, double targetY, bool flipped = false) {
     double theta = getAngleToPoint(targetX, targetY);
-    theta += flipped ? -1*M_PI : 0; 
+    if (flipped) {
+      theta += M_PI * (theta <= 0 ? 1 : -1);
+    }
+    //theta += flipped ? -1*M_PI : 0; 
     turnPID(theta);
   }
 
@@ -318,7 +346,7 @@ public:
   }*/
 
   void shootToNearGoal(int disks = 1) { //can specifiy number of disks to fire, but fires 1 by default
-    turnToPoint(17.78, 17.78, true);
+    turnToPoint(17.78, 17.78, false);//true
 
     Shooter::spinShooterForward(78);
     for (int i = 0; i < disks; i++) {
@@ -329,7 +357,7 @@ public:
   }
   
   void shootToFarGoal(int disks = 1) { //can specifiy number of disks to fire, but fires 1 by default
-    turnToPoint(122.63, 122.63, true);
+    turnToPoint(122.63, 122.63, false);//true
 
     Shooter::spinShooterForward(78);
     for (int i = 0; i < disks; i++) {
